@@ -1,0 +1,4 @@
+xquery declare namespace be = "http://cvberry.com";  doc("contacts.xml")/be:contacts
+
+xquery declare default element namespace "http://cvberry.com";  doc("contacts.xml")/contacts/contact
+
