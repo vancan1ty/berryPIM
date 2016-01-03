@@ -19,15 +19,10 @@ public class App
         Server jettyServer = new Server(8080);
         jettyServer.setHandler(context);
  
-        ServletHolder jerseyServlet = context.addServlet(
-             org.glassfish.jersey.servlet.ServletContainer.class, "/*");
-        jerseyServlet.setInitOrder(0);
- 
-        // Tells the Jersey Servlet which REST service/class to load.
-        jerseyServlet.setInitParameter(
-           "jersey.config.server.provider.classnames",
-           Facade.class.getCanonicalName());
- 
+        ServletHolder myServlet = context.addServlet(
+                com.cvberry.berrypim.HelloServlet.class, "/*");
+        myServlet.setInitOrder(0);
+
         try {
             jettyServer.start();
             jettyServer.join();
