@@ -1,0 +1,144 @@
+#wrapper {
+    text-align: center;
+}
+
+.centered {
+   display: inline-block;
+   width: 800px;
+}
+
+#mainForm {
+    text-align: left;
+    display: inline-block;
+    margin-left: 414px;
+    margin-right: -5px;
+}
+
+#mainForm input,select {
+    margin: 10px;
+}
+
+#mainForm a {
+    text-decoration: none;
+    color: black;
+    padding-right: 10px;
+}
+
+#mainForm a:hover, #mainForm a>label:hover {
+    cursor: pointer;
+}
+
+#mainForm label {
+    font-weight: bold;
+}
+
+#myHeader {
+    text-align: left;
+}
+
+#myHeader h1 {
+    display: inline-block;
+    margin-top: 3px;
+    padding-top: 0px;
+    font-family: "Arial",sans-serif;
+}
+
+#viewport {
+    text-align: left;
+    border: 1px solid gray;
+    border-radius: 0px 4px 4px 4px;
+    min-height: 500px;
+    margin-top: 10px;
+}
+
+#toptabs {
+    position: relative;
+    bottom: 40px;
+    right: 41px;
+}
+#toptabs ul {
+    list-style: none;
+}
+
+#toptabs ul li {
+    float: left;
+    border-top: 1px solid gray;
+    border-left: 1px solid gray;
+    border-radius: 2px 2px 0px 0px;
+    padding: 1px 3px;
+}
+
+#toptabs ul li:last-child {
+    border-right: 1px solid gray;
+}
+
+#toptabs ul li a {
+    text-decoration: none;
+}
+
+li.active {
+    background-color: #eeeeee;
+}
+
+#ltabs li.active {
+    border-right: 1px solid gray;
+}
+
+#ltabs {
+    position:absolute;
+}
+
+#ltabs>ul {
+    list-style: none;
+    position: relative;
+    left: -186px;
+    bottom: 17px;
+}
+
+#ltabs>ul li {
+    width: 140px;
+    border-left: 1px solid gray;
+    border-top: 1px solid gray;
+    padding: 2px;
+    text-align: center;
+}
+
+#ltabs>ul li:last-child {
+    border-bottom: 1px solid gray;
+}
+
+#ltabs>ul li a {
+    text-decoration: none;
+}
+
+#viewport .entry {
+    padding: 5px;
+    margin: 5px 0px;
+    border: 1px solid gray;
+    border-radius: 4px;
+}
+
+ul.legs {
+    list-style: none;
+}
+
+ul.legs li {
+    margin-top: 5px;
+}
+
+#mainForm .lnr {
+ display: inline-block;
+  fill: currentColor;
+  width: 1.2em;
+  height: 1.2em;
+  vertical-align: -0.25em;
+  margin-left: 2px;
+}
+
+.lnr {
+  display: inline-block;
+  fill: currentColor;
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.05em;
+}
