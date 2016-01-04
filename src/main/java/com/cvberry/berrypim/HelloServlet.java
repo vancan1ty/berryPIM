@@ -1,74 +1,108 @@
 package com.cvberry.berrypim;
 // Import required java libraries
+
+import com.cvberry.util.ResourceLister;
 import com.cvberry.util.Utility;
+import org.xml.sax.SAXException;
 
 import java.io.*;
+import java.net.URISyntaxException;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import javax.annotation.Resource;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
 
 /**
  * Created by vancan1ty on 1/2/2016.
  */
 public class HelloServlet extends HttpServlet {
 
-  private String message;
-  private String PIMFILESROOT;
-  private File contactsDoc;
-  private File contactsSchema;
-  private String contactsDocStr;
+    /*private File contactsDoc;
+    private File contactsSchema;
+    private String contactsDocStr;*/
+    //private String cachedTemplate;
+    private ServletConfig servletConfig;
+    private Anchor myAnchor;
+    private Templater myTemplater;
 
-    public void init() throws ServletException
-  {
-      // Do required initialization
-      message = "Hello World";
-      String pimFilesRoot = System.getProperty("BERRYPIM_DATA_ROOT");
-      if (pimFilesRoot == null) {
-          PIMFILESROOT = "berryData";
-      } else {
-          PIMFILESROOT = pimFilesRoot;
-      }
 
-      contactsDoc = new File(PIMFILESROOT+"/"+"contacts.xml");
-      try {
-          contactsDocStr = Utility.slurp(contactsDoc.getPath());
-      } catch (IOException e) {
-          e.printStackTrace();
-      }
-      contactsSchema = new File(PIMFILESROOT+"/"+"contacts_schema.xsd");
-      StringBuilder vMessBuilder = new StringBuilder();
-      try {
-          boolean contactsValid = XMLValidator.validateDocument(contactsDoc,contactsSchema,vMessBuilder);
-          if(!contactsValid) {
-              System.err.println(vMessBuilder.toString());
-          }
-      } catch (IOException e) {
-          e.printStackTrace();
-      } catch (ParserConfigurationException e) {
-          e.printStackTrace();
-      }
-  }
+    public void init(ServletConfig config) throws ServletException {
+        // Do required initialization
+        /*contactsDoc = new File(PIMFILESROOT + "/" + "contacts.xml");
+        try {
+            contactsDocStr = Utility.slurp(contactsDoc.getPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        contactsSchema = new File(PIMFILESROOT + "/" + "contacts_schema.xsd");
+        StringBuilder vMessBuilder = new StringBuilder();
+        try {
+            boolean contactsValid = XMLValidator.validateDocument(contactsDoc, contactsSchema, vMessBuilder);
+            if (!contactsValid) {
+                System.err.println(vMessBuilder.toString());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        }*/
 
-  public void doGet(HttpServletRequest request,
-                    HttpServletResponse response)
-            throws ServletException, IOException
-  {
-      // Set response content type
-      response.setContentType("text/html");
+        this.servletConfig = config;
+        ServletContext context = config.getServletContext();
+        //InputStream resourceContent = context.getResourceAsStream("/WEB-INF/templates/maintemplate.html");
+        //InputStream cachedTemplateStream = ClassLoader.getSystemResourceAsStream("/WEB-INF/template/maintemplate.html");
+        //ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        //InputStream theFlow = classLoader.getResourceAsStream("templates/maintemplate.html");
+        //cachedTemplate = Utility.convertStreamToString(theFlow);
 
-      // Actual logic goes here.
-      PrintWriter out = response.getWriter();
-      out.println("<h1> Waddup Jackets </h1>");
-      out.println("Working Directory = " +
-              System.getProperty("user.dir"));
-      out.println("<hr/>");
-      out.println("<pre>");
-      out.println(contactsDocStr);
-      out.println("</pre>");
-  }
+//      Collection<String> resources = ResourceLister.getResources(Pattern.compile(".*"));
+//      StringBuilder joined = new StringBuilder();
+//      Iterator<String> strIterator = resources.iterator();
+//      while(strIterator.hasNext()) {
+//          String next = strIterator.next();
+//          joined.append(next);
+//          if(strIterator.hasNext()) {
+//             joined.append(",");
+//          }
+//      }
+//      cachedTemplate = joined.toString();
 
-  public void destroy()
-  {
-      // do nothing.
-  }
+        //mainTemplate = new File(PIMFILESROOT+"/"+"contacts_schema.xsd");
+
+        try {
+            Bootstrap.bootstrap(context.getContextPath());
+        } catch (Exception e) { //then setup did not succeed
+            e.printStackTrace();
+            System.exit(1);
+        }
+
+        myAnchor = Anchor.getInstance();
+        myTemplater = myAnchor.getTemplater();
+
+    }
+
+    public void doGet(HttpServletRequest request,
+                      HttpServletResponse response)
+            throws ServletException, IOException {
+        // Set response content type
+        response.setContentType("text/html");
+
+        // Actual logic goes here.
+        PrintWriter out = response.getWriter();
+        out.println(myTemplater.template(myTemplater.getMainTemplateContents()));
+        out.println(ResourceLister.getResources(Pattern.compile(".*\\.html")).stream().collect(Collectors.joining("\n")));
+        out.println("<textarea>");
+        //out.println(contactsDocStr);
+        out.println("</textarea>");
+        out.println(servletConfig.getServletContext().getContextPath());
+    }
+
+    public void destroy() {
+        // do nothing.
+    }
 }

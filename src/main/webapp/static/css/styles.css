@@ -52,6 +52,10 @@
 }
 
 #toptabs {
+    position: absolute;
+}
+
+#toptabs ul {
     position: relative;
     bottom: 40px;
     right: 41px;
@@ -109,6 +113,10 @@ li.active {
 
 #ltabs>ul li a {
     text-decoration: none;
+}
+
+#content {
+    padding: 5px;
 }
 
 #viewport .entry {

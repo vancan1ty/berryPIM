@@ -2,8 +2,8 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title>berryPIM</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <title>{{appName}}</title>
+    <link rel="stylesheet" href="{{rootPath}}/static/css/styles.css">
 </head>
 <body>
 <svg display="none" width="0" height="0" version="1.1" xmlns="http://www.w3.org/2000/svg"
@@ -36,40 +36,26 @@
 <div id="wrapper">
     <div class="centered">
         <div id="topArea">
-        <div id="myHeader">
-            <h1>berryPIM</h1>
-        <div id="mainForm">
-            <a href="?reload=true">
-                <label>Refresh</label>
-                <svg class="lnr lnr-sync"><use xlink:href="#lnr-sync"></use></svg>
-            </a>
-            <a href="?sync=true">
-            <label>Sync With Server</label>
-            <svg class="lnr lnr-cloud-sync"><use xlink:href="#lnr-cloud-sync"></use></svg>
-            </a>
+            <div id="myHeader">
+                <h1>{{appName}}</h1>
+                <div id="mainForm">
+                    {{@include="mainActionsTemplate.html"}}
+                </div>
+            </div>
         </div>
-        </div>
-        </div>
-
         <div id="viewport">
             <div id="ltabs">
                 <ul>
-                    <li class="active"><a href="raw">Raw</a></li>
-                    <li><a href="dashboard">Dashboard</a></li>
-                    <li><a href="addNew">Data Entry</a></li>
-                    <li><a href="searchContacts">Search Contacts</a></li>
+                    {{ltabsItems}}
                 </ul>
             </div>
             <div id="toptabs">
                 <ul>
-                    <li><a href="books.xml">books.xml</a></li>
-                    <li class="active"><a href="contacts.xml">contacts.xml</a></li>
-                    <li><a href="contacts_schema.xml">contacts_schema.xml</a></li>
-                    <li><a href="searchContacts">Search Contacts</a></li>
+                    {{topTabsItems}}
                 </ul>
             </div>
             <div id="content">
-                I am content.
+                {{contentPane}}
             </div>
         </div>
     </div>
