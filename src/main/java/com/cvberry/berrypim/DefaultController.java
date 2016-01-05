@@ -11,7 +11,7 @@ import java.util.Map;
 public class DefaultController implements ControllerObject {
 
     Anchor myAnchor;
-    String rootPathStr;
+    public String rootPathStr;
     public String controllerBase = "";
 
     public DefaultController() {

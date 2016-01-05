@@ -1,6 +1,12 @@
 package com.cvberry.util;
 
+import javax.swing.*;
 import javax.xml.parsers.DocumentBuilderFactory;
+import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -16,10 +22,11 @@ import java.util.Map;
  */
 public class Utility {
 
+    private static Object lock = new Object();
+
     //http://stackoverflow.com/questions/326390/how-to-create-a-java-string-from-the-contents-of-a-file
     public static String slurp(String path)
-            throws IOException
-    {
+            throws IOException {
         byte[] encoded = Files.readAllBytes(Paths.get(path));
         return new String(encoded, StandardCharsets.UTF_8);
     }
@@ -29,16 +36,16 @@ public class Utility {
         return s.hasNext() ? s.next() : "";
     }
 
-    public static <L,R> List<Map.Entry<L,R>> tupleizeArray(Object[] arr) {
-        List<Map.Entry<L,R>> out = new ArrayList<>();
-       for (int i = 0; i < arr.length-1; i+=2) {
-          out.add(new AbstractMap.SimpleImmutableEntry<L, R>((L) arr[i],(R) arr[i+1]));
-       }
-       return out;
+    public static <L, R> List<Map.Entry<L, R>> tupleizeArray(Object[] arr) {
+        List<Map.Entry<L, R>> out = new ArrayList<>();
+        for (int i = 0; i < arr.length - 1; i += 2) {
+            out.add(new AbstractMap.SimpleImmutableEntry<L, R>((L) arr[i], (R) arr[i + 1]));
+        }
+        return out;
     }
 
     public static String getPathComponentOrDefault(String[] pathComponents, int index, String defaultStr) {
-        String selectorPath = (pathComponents.length < index+1 || pathComponents[index] == null || pathComponents[index].isEmpty()) ?
+        String selectorPath = (pathComponents.length < index + 1 || pathComponents[index] == null || pathComponents[index].isEmpty()) ?
                 defaultStr : pathComponents[index];
         return selectorPath;
     }
@@ -52,5 +59,49 @@ public class Utility {
         factory.setValidating(false); // Don't validate DTD: also default
 
         return factory;
+    }
+
+    public static void displayImage(BufferedImage img) throws IOException, InterruptedException {
+        ImageIcon icon = new ImageIcon(img);
+        JFrame frame = new JFrame();
+        frame.setLayout(new FlowLayout());
+        frame.setSize(200, 300);
+        JLabel lbl = new JLabel();
+        lbl.setIcon(icon);
+        frame.add(lbl);
+        frame.setVisible(true);
+        frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+
+        Thread t = new Thread() {
+            public void run() {
+                synchronized (lock) {
+                    while (frame.isVisible())
+                        try {
+                            lock.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    System.out.println("Working now");
+                }
+            }
+        };
+        t.start();
+
+        frame.addWindowListener(new WindowAdapter() {
+
+            @Override
+            public void windowClosing(WindowEvent arg0) {
+                synchronized (lock) {
+                    System.out.println("closing window");
+                    frame.setVisible(false);
+                    lock.notify();
+                }
+            }
+
+        });
+        System.out.println("before join");
+        t.join();
+        System.out.println("after join");
+
     }
 }

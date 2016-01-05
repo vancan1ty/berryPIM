@@ -93,7 +93,7 @@ public class HelloServlet extends HttpServlet {
         response.setContentType("text/html");
 
         // Actual logic goes here.
-        PrintWriter out = response.getWriter();
+        //PrintWriter out = response.getWriter();
         String templated = myTemplater.template(myTemplater.getMainTemplateContents());
         System.out.println("pathInfo");
         System.out.println(request.getPathInfo());

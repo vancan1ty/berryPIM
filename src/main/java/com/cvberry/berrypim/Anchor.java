@@ -39,4 +39,7 @@ public class Anchor {
     public String getRootPath() {return rootPath;}
     public void setRootPath(String rootPath) {this.rootPath = rootPath;}
 
+    private ImageStreamer imStreamer;
+    public ImageStreamer getImageStreamer() {return imStreamer;}
+    public void setImageStreamer(ImageStreamer imStreamer) {this.imStreamer = imStreamer;}
 }

@@ -155,3 +155,15 @@ ul.legs li {
     width: 781px;
     height: 500px;
 }
+
+table.fullspan {
+    width: 781px;
+}
+
+table.center {
+    text-align: center;
+}
+
+table.center table {
+    display:inline-block;
+}

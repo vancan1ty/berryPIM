@@ -1,9 +1,13 @@
 package com.cvberry.berrypimimpl;
 
+import com.cvberry.berrypim.Anchor;
 import com.cvberry.berrypim.ControllerObject;
+import com.cvberry.berrypim.widgets.PieChart;
 import com.cvberry.util.Utility;
 import com.sun.management.OperatingSystemMXBean;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.util.List;
@@ -39,19 +43,33 @@ public class DashboardController extends PIMDefaultController implements Control
         long totalDiskSize = (file.getTotalSpace());
         long freeDiskSpace = file.getFreeSpace();
         long usedDiskSpace = totalDiskSize-freeDiskSpace;
-        out.append("<h3>Memory</h3>\n");
-        out.append("<table>\n");
+        out.append("<table class='fullspan center'><tr>\n");
+        out.append("<th><h3>Memory</h3></th>\n");
+        out.append("<th><h3>Disk</h3></th>\n");
+        out.append("</tr><tr>\n");
+        out.append("<td>");
+        out.append(PieChart.createAndEnqueueChart(
+                PieChart.createDatasetFromArrays(new String[]{"Free","Used"},
+                        new Double[]{freeMemory/BYTESINGIG,usedMemory/BYTESINGIG}),
+                null,rootPathStr,false,true,300,300));
+        out.append("<br><table>\n");
         out.append("<tr><th>Total</th><th>Free</th><th>Used</th></tr>\n");
         out.append(String.format("<tr><td>%.1f</td><td>%.1f</td><td>%.1f</td></tr>\n",
                 totalMemorySize/BYTESINGIG,freeMemory/BYTESINGIG,usedMemory/BYTESINGIG));
         out.append("</table>\n");
-
-        out.append("<h3>Disk</h3>\n");
-        out.append("<table>\n");
+        out.append("</td><td>");
+        out.append(PieChart.createAndEnqueueChart(
+                PieChart.createDatasetFromArrays(new String[]{"Free","Used"},
+                        new Double[]{freeDiskSpace/BYTESINGIG,usedDiskSpace/BYTESINGIG}),
+                null,rootPathStr,false,true,300,300));
+        out.append("<br><table>\n");
         out.append("<tr><th>Total</th><th>Free</th><th>Used</th></tr>\n");
         out.append(String.format("<tr><td>%.1f</td><td>%.1f</td><td>%.1f</td></tr>\n",
                 totalDiskSize/BYTESINGIG,freeDiskSpace/BYTESINGIG,usedDiskSpace/BYTESINGIG));
+        out.append("</td>");
         out.append("</table>\n");
+
+
         return out.toString();
     }
 }
