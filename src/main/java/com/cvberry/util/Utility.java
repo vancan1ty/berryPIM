@@ -1,13 +1,26 @@
 package com.cvberry.util;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
 import javax.swing.*;
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
+import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -103,5 +116,21 @@ public class Utility {
         t.join();
         System.out.println("after join");
 
+    }
+
+    public static String runXPathOnString(String documentStr, String query) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
+        DocumentBuilderFactory factory = Utility.getConfiguredDocBuilderFactory();
+
+        //Now use the factory to create a DOM parser, a.k.a. DocumentBuilder
+        DocumentBuilder parser = null;
+        parser = factory.newDocumentBuilder();
+
+        String xpathStr = query;
+        Document document = null;
+        document = parser.parse(new InputSource(new StringReader(documentStr)));
+
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        String result = xPath.compile(xpathStr).evaluate(document);
+        return result;
     }
 }

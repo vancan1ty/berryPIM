@@ -96,8 +96,9 @@ public class HelloServlet extends HttpServlet {
         //PrintWriter out = response.getWriter();
         String templated = myTemplater.template(myTemplater.getMainTemplateContents());
         System.out.println("pathInfo");
-        System.out.println(request.getPathInfo());
-        myAnchor.getDispatcher().dispatch(request.getPathInfo(),templated,request,response);
+        String fullReqStr = request.getPathInfo() + "?" + request.getQueryString();
+        System.out.println(fullReqStr);
+        myAnchor.getDispatcher().dispatch(fullReqStr,templated,request,response);
         //out.println(ResourceLister.getResources(Pattern.compile(".*\\.html")).stream().collect(Collectors.joining("\n")));
         //out.println("<textarea>");
         //out.println(contactsDocStr);

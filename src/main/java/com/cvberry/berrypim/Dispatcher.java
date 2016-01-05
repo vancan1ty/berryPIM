@@ -3,6 +3,8 @@ package com.cvberry.berrypim;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,7 +67,12 @@ public class Dispatcher {
         if (twoParts.length < 2) {
             return null;
         } else {
-            return twoParts[1];
+            try {
+                return URLDecoder.decode(twoParts[1].replace("+", "%2B"), "UTF-8").replace("%2B", "+");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
         }
+        return null; //should never get here.
     }
 }
