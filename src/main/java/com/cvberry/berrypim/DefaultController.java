@@ -74,7 +74,7 @@ public class DefaultController implements ControllerObject {
         String[] starter = {
                 "raw", "Raw",
                 "dashboard", "Dashboard",
-                "addNew", "Date Entry",
+                "addNew", "Data Entry",
                 "searchContacts", "Search Contacts"
         };
         return Utility.tupleizeArray(starter);

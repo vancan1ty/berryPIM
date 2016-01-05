@@ -3,7 +3,6 @@ package com.cvberry.berrypimimpl;
 import com.cvberry.berrypim.Anchor;
 import com.cvberry.berrypim.ControllerObject;
 import com.cvberry.berrypim.DataFilesManager;
-import com.cvberry.berrypim.DefaultController;
 import com.cvberry.util.Utility;
 import com.sun.management.OperatingSystemMXBean;
 
@@ -15,7 +14,7 @@ import java.util.Map;
 /**
  * Created by vancan1ty on 1/4/2016.
  */
-public class RawController extends DefaultController implements ControllerObject {
+public class RawController extends PIMDefaultController implements ControllerObject {
 
     Anchor myAnchor;
     DataFilesManager filesManager;

@@ -15,6 +15,7 @@ public class PIMConfigurator implements Configurator {
         Anchor myAnchor = Anchor.getInstance();
         myAnchor.getDispatcher().addDispatchPath("dashboard",new DashboardController("dashboard/"));
         myAnchor.getDispatcher().addDispatchPath("raw",new RawController("raw/"));
+        myAnchor.getDispatcher().addDispatchPath("",new DashboardController("dashboard/"));
     }
 
 }

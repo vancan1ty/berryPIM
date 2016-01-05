@@ -1,7 +1,6 @@
 package com.cvberry.berrypimimpl;
 
 import com.cvberry.berrypim.ControllerObject;
-import com.cvberry.berrypim.DefaultController;
 import com.cvberry.util.Utility;
 import com.sun.management.OperatingSystemMXBean;
 
@@ -13,7 +12,7 @@ import java.util.Map;
 /**
  * Created by vancan1ty on 1/4/2016.
  */
-public class DashboardController extends DefaultController implements ControllerObject {
+public class DashboardController extends PIMDefaultController implements ControllerObject {
 
     public DashboardController(String controllerBase) {
         this.controllerBase = controllerBase;
