@@ -76,7 +76,7 @@ public class Utility {
 
     public static void displayImage(BufferedImage img) throws IOException, InterruptedException {
         ImageIcon icon = new ImageIcon(img);
-        JFrame frame = new JFrame();
+        final JFrame frame = new JFrame();
         frame.setLayout(new FlowLayout());
         frame.setSize(200, 300);
         JLabel lbl = new JLabel();

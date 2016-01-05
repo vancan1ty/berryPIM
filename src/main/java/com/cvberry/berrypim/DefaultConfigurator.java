@@ -6,6 +6,7 @@ import com.cvberry.util.Utility;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -26,8 +27,11 @@ public class DefaultConfigurator implements Configurator {
         myAnchor.setDataFilesManager(filesManager);
 
         System.out.println("templates");
-        List<String> templateFileNames = Arrays.stream(ResourceLister
-                .getResourceListingForPath(this.getClass(),"templates/")).map((String s)-> "templates/"+s).collect(Collectors.toList());
+        List<String> templateFileNames = new ArrayList<>();
+        String[] tempFileNames = ResourceLister.getResourceListingForPath(this.getClass(),"templates/");
+        for (String s : tempFileNames) {
+            templateFileNames.add("templates/"+s);
+        }
         System.out.println(Arrays.toString(templateFileNames.toArray(new String[0])));
         Templater templater = new Templater(rootPath);
         templater.registerTemplates(templateFileNames);
