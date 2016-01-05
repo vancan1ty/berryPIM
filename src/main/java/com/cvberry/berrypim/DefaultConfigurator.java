@@ -22,12 +22,15 @@ public class DefaultConfigurator implements Configurator {
 
         myAnchor.setAppName("berryPIM");
 
-        String pimFilesRoot = System.getProperty("BERRYPIM_DATA_ROOT");
-        if (pimFilesRoot == null) {
+        String prospectivePimFilesRoot = System.getProperty("BERRYPIM_DATA_ROOT");
+        if (prospectivePimFilesRoot == null) {
             myAnchor.setPIMFilesRoot("berryData");
         } else {
-            myAnchor.setPIMFilesRoot(pimFilesRoot);
+            myAnchor.setPIMFilesRoot(prospectivePimFilesRoot);
         }
+
+        DataFilesManager filesManager = new DataFilesManager(myAnchor.getPIMFilesRoot());
+        myAnchor.setDataFilesManager(filesManager);
 
         System.out.println("templates");
         List<String> templateFileNames = Arrays.stream(ResourceLister
@@ -41,7 +44,7 @@ public class DefaultConfigurator implements Configurator {
 
         myAnchor.setDispatcher(new Dispatcher());
         DefaultController dController = new DefaultController();
-        myAnchor.getDispatcher().dispatchMap.put("",dController);
-        myAnchor.getDispatcher().dispatchMap.put("/",dController);
+        myAnchor.getDispatcher().addDispatchPath("",dController);
+        myAnchor.getDispatcher().addDispatchPath("/",dController);
     }
 }

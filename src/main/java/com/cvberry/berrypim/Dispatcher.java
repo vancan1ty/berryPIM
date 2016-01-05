@@ -10,7 +10,7 @@ import java.util.Map;
  * Created by vancan1ty on 1/3/2016.
  */
 public class Dispatcher {
-    public Map<String, ControllerObject> dispatchMap;
+    private Map<String, ControllerObject> dispatchMap;
 
     public Dispatcher() {
         this.dispatchMap = new HashMap<>();
@@ -39,6 +39,10 @@ public class Dispatcher {
         }
         String myOutput = controller.control(getPathComponents(pathStr),getQueryStr(pathStr),mainTemplate);
         response.getWriter().print(myOutput);
+    }
+
+    public void addDispatchPath(String path, ControllerObject controller) {
+        this.dispatchMap.put(path.toLowerCase(),controller);
     }
 
     public static String[] getPathComponents(String pathStr) {

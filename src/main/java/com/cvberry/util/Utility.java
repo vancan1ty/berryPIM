@@ -5,6 +5,10 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by vancan1ty on 1/2/2016.
@@ -24,4 +28,17 @@ public class Utility {
         return s.hasNext() ? s.next() : "";
     }
 
+    public static <L,R> List<Map.Entry<L,R>> tupleizeArray(Object[] arr) {
+        List<Map.Entry<L,R>> out = new ArrayList<>();
+       for (int i = 0; i < arr.length-1; i+=2) {
+          out.add(new AbstractMap.SimpleImmutableEntry<L, R>((L) arr[i],(R) arr[i+1]));
+       }
+       return out;
+    }
+
+    public static String getPathComponentOrDefault(String[] pathComponents, int index, String defaultStr) {
+        String selectorPath = (pathComponents.length < index+1 || pathComponents[index] == null || pathComponents[index].isEmpty()) ?
+                defaultStr : pathComponents[index];
+        return selectorPath;
+    }
 }

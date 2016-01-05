@@ -32,6 +32,10 @@ public class Bootstrap {
 
     public static void bootstrap(String rootPath) throws IOException, SAXException, ParserConfigurationException,
             XPathExpressionException, ClassNotFoundException, IllegalAccessException, InstantiationException, URISyntaxException {
+
+        Anchor myAnchor = Anchor.getInstance();
+        myAnchor.setRootPath(rootPath);
+
         DocumentBuilderFactory factory = getConfiguredFactory();
 
         //Now use the factory to create a DOM parser, a.k.a. DocumentBuilder

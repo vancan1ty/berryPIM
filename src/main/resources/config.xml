@@ -2,5 +2,6 @@
 <config>
     <configurators>
        com.cvberry.berrypim.DefaultConfigurator
+       com.cvberry.berrypimimpl.PIMConfigurator
     </configurators>
 </config>

@@ -43,7 +43,7 @@ public class TemplateEngine {
                 e.printStackTrace();
             }
 
-            m.appendReplacement(theBuf,iTemplateStr);
+            m.appendReplacement(theBuf,Matcher.quoteReplacement(iTemplateStr));
         }
         m.appendTail(theBuf);
 

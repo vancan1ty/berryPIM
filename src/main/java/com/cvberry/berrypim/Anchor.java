@@ -30,4 +30,13 @@ public class Anchor {
     public Dispatcher getDispatcher() {return dispatcher;}
     public void setDispatcher(Dispatcher dispatcher) {this.dispatcher = dispatcher;}
 
+    private DataFilesManager dataFilesManager;
+    public DataFilesManager getDataFilesManager() {return dataFilesManager;}
+    public void setDataFilesManager(DataFilesManager dataFilesManager) {this.dataFilesManager = dataFilesManager;}
+
+    //[CB] set on servlet initialization
+    private String rootPath;
+    public String getRootPath() {return rootPath;}
+    public void setRootPath(String rootPath) {this.rootPath = rootPath;}
+
 }
