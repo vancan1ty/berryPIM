@@ -26,4 +26,8 @@ public class Anchor {
     public Templater getTemplater() {return templater;}
     public void setTemplater(Templater templater) {this.templater = templater;}
 
+    private Dispatcher dispatcher;
+    public Dispatcher getDispatcher() {return dispatcher;}
+    public void setDispatcher(Dispatcher dispatcher) {this.dispatcher = dispatcher;}
+
 }

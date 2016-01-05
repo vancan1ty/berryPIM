@@ -94,12 +94,14 @@ public class HelloServlet extends HttpServlet {
 
         // Actual logic goes here.
         PrintWriter out = response.getWriter();
-        out.println(myTemplater.template(myTemplater.getMainTemplateContents()));
-        out.println(ResourceLister.getResources(Pattern.compile(".*\\.html")).stream().collect(Collectors.joining("\n")));
-        out.println("<textarea>");
+        String templated = myTemplater.template(myTemplater.getMainTemplateContents());
+        System.out.println("pathInfo");
+        System.out.println(request.getPathInfo());
+        myAnchor.getDispatcher().dispatch(request.getPathInfo(),templated,request,response);
+        //out.println(ResourceLister.getResources(Pattern.compile(".*\\.html")).stream().collect(Collectors.joining("\n")));
+        //out.println("<textarea>");
         //out.println(contactsDocStr);
-        out.println("</textarea>");
-        out.println(servletConfig.getServletContext().getContextPath());
+        //out.println("</textarea>");
     }
 
     public void destroy() {

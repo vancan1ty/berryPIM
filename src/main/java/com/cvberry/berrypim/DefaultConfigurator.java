@@ -38,5 +38,10 @@ public class DefaultConfigurator implements Configurator {
         myAnchor.setTemplater(templater);
         //System.out.println(Arrays.toString(ResourceLister.getResourceListingForPath(this.getClass(),"templates/")));
         //System.out.println(ResourceLister.getResources(Pattern.compile(".*")).stream().filter((s)-> s.contains("templates")).collect(Collectors.joining("\n")).toString());
+
+        myAnchor.setDispatcher(new Dispatcher());
+        DefaultController dController = new DefaultController();
+        myAnchor.getDispatcher().dispatchMap.put("",dController);
+        myAnchor.getDispatcher().dispatchMap.put("/",dController);
     }
 }
