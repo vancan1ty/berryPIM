@@ -1,1 +1,3 @@
 java -cp ".;../../;../lib/*" com.cvberry.App
+
+grep -Rc '^.*$' * | awk 'BEGIN {sum=0;} {FS=":"; sum=sum+$2;} END {print sum}'

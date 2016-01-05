@@ -66,7 +66,7 @@ public class DefaultController implements ControllerObject {
 
     }
 
-    public String fill_contentPane(String[] pathComponents, String queryStr) {
+    public String fill_contentPane(String[] pathComponents, String queryStr) throws Exception {
         return "I am content.";
     }
 

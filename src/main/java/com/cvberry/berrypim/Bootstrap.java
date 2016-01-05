@@ -1,6 +1,7 @@
 package com.cvberry.berrypim;
 
 import com.cvberry.util.ResourceLister;
+import com.cvberry.util.Utility;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -36,7 +37,7 @@ public class Bootstrap {
         Anchor myAnchor = Anchor.getInstance();
         myAnchor.setRootPath(rootPath);
 
-        DocumentBuilderFactory factory = getConfiguredFactory();
+        DocumentBuilderFactory factory = Utility.getConfiguredDocBuilderFactory();
 
         //Now use the factory to create a DOM parser, a.k.a. DocumentBuilder
         DocumentBuilder parser = factory.newDocumentBuilder();
@@ -70,14 +71,5 @@ public class Bootstrap {
         //System.out.println(ResourceLister.listResources(Pattern.compile(".*\\.xml")));
     }
 
-    public static DocumentBuilderFactory getConfiguredFactory() {
-        //Create a factory object for creating DOM parsers and configure it.
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setIgnoringComments(true); //We want to ignore comments
-        factory.setCoalescing(true); // Convert CDATA to Text nodes
-        factory.setNamespaceAware(false); // No namespaces: this is default
-        factory.setValidating(false); // Don't validate DTD: also default
 
-        return factory;
-    }
 }
