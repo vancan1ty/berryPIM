@@ -48,7 +48,7 @@ public class Templater {
         while(m.find()) {
             String templateName = m.group(1);
             String iTemplateStr = registeredTemplates.get(templateName);
-            m.appendReplacement(theBuf,iTemplateStr);
+            m.appendReplacement(theBuf,Matcher.quoteReplacement(iTemplateStr));
         }
         m.appendTail(theBuf);
         return theBuf.toString();
@@ -56,6 +56,10 @@ public class Templater {
 
     public String getMainTemplateContents() {
         return registeredTemplates.get("maintemplate.html");
+    }
+
+    public String getTemplateContents(String name) {
+        return registeredTemplates.get(name);
     }
 
 }
