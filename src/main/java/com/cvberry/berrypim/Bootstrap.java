@@ -27,6 +27,13 @@ public class Bootstrap {
         Anchor myAnchor = Anchor.getInstance();
         myAnchor.setRootPath(rootPath);
 
+        String prospectivePimFilesRoot = System.getProperty("BERRYPIM_DATA_ROOT");
+        if (prospectivePimFilesRoot == null) {
+            myAnchor.setPIMFilesRoot("../berryData");
+        } else {
+            myAnchor.setPIMFilesRoot(prospectivePimFilesRoot);
+        }
+
         ImageStreamer imStreamer = new ImageStreamer();
         myAnchor.setImageStreamer(imStreamer);
 

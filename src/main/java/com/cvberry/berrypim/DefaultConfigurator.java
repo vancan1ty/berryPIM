@@ -22,13 +22,6 @@ public class DefaultConfigurator implements Configurator {
 
         myAnchor.setAppName("berryPIM");
 
-        String prospectivePimFilesRoot = System.getProperty("BERRYPIM_DATA_ROOT");
-        if (prospectivePimFilesRoot == null) {
-            myAnchor.setPIMFilesRoot("berryData");
-        } else {
-            myAnchor.setPIMFilesRoot(prospectivePimFilesRoot);
-        }
-
         DataFilesManager filesManager = new DataFilesManager(myAnchor.getPIMFilesRoot());
         myAnchor.setDataFilesManager(filesManager);
 
