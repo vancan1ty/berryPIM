@@ -4,14 +4,24 @@
 
 .centered {
    display: inline-block;
-   width: 800px;
+}
+
+@media screen and (min-width: 900px) {
+    .centered {
+       display: inline-block;
+    }
 }
 
 #mainForm {
     text-align: left;
     display: inline-block;
-    margin-left: 414px;
-    margin-right: -5px;
+}
+
+@media screen and (min-width: 900px) {
+    #mainForm {
+        margin-left: 414px;
+        margin-right: -5px;
+    }
 }
 
 #mainForm input,select {
@@ -47,8 +57,13 @@
     text-align: left;
     border: 1px solid gray;
     border-radius: 0px 4px 4px 4px;
-    min-height: 500px;
     margin-top: 10px;
+}
+
+@media screen and (min-height: 550px) {
+    #viewport {
+        min-height: 500px;
+    }
 }
 
 #toptabs {
@@ -57,9 +72,10 @@
 
 #toptabs ul {
     position: relative;
-    bottom: 40px;
-    right: 41px;
+    bottom: 27px;
+    right: 40px;
 }
+
 #toptabs ul {
     list-style: none;
 }
@@ -95,10 +111,51 @@ li.active {
 #ltabs>ul {
     list-style: none;
     position: relative;
-    left: -186px;
-    bottom: 17px;
 }
 
+@media screen and (min-width: 900px) {
+    #ltabs>ul {
+        left: -185px;
+        bottom: 6px;
+    }
+}
+
+@media screen and (max-width: 900px) {
+
+    #myHeader > h1 {
+        margin-bottom: 6px;
+    }
+    #ltabs {
+        position:static;
+    }
+
+    #ltabs>ul {
+        list-style: none;
+        padding: 0px;
+        margin-top: 0px;
+    }
+
+    #ltabs>ul li {
+        float: left;
+        border: 1px solid gray;
+    }
+
+    #toptabs {
+        position: static;
+    }
+
+    #toptabs ul {
+        position: static;
+        padding-left: 0px;
+    }
+
+   #ltabs:after {
+        content:'';
+        display:block;
+        clear: both;
+    }
+
+}
 #ltabs>ul li {
     width: 140px;
     border-left: 1px solid gray;
@@ -151,13 +208,19 @@ ul.legs li {
   vertical-align: -0.05em;
 }
 
+/*CB overriden below for normal screens*/
 .fullsize {
-    width: 781px;
-    height: 500px;
+        width: 100%;
 }
 
-table.fullspan {
-    width: 781px;
+@media screen and (min-width: 900px) {
+    .fullsize {
+        width: 781px;
+        height: 500px;
+    }
+    table.fullspan {
+        width: 781px;
+    }
 }
 
 table.center {

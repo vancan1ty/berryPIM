@@ -56,7 +56,7 @@ public class RawController extends PIMDefaultController implements ControllerObj
         String fileContents = filesManager.getFileContents(fileName);
         out.append("<textarea class='fullsize'>");
         out.append(fileContents);
-        out.append("</textarea>");
+        out.append("</textarea><br>");
 
         if (fileName.endsWith(".xml") || fileName.endsWith(".xsd")) {
             out.append("<b>Run XPath</b>\n");
