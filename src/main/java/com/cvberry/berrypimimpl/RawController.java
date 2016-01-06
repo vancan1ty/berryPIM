@@ -8,6 +8,7 @@ import com.sun.management.OperatingSystemMXBean;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.File;
 import java.io.IOException;
@@ -48,7 +49,7 @@ public class RawController extends PIMDefaultController implements ControllerObj
         return Utility.getPathComponentOrDefault(pathComponents, 1, getTopTabsItems().get(0).getKey());
     }
 
-    public String fill_contentPane(String[] pathComponents, String queryStr) throws SAXException, ParserConfigurationException, XPathExpressionException, IOException {
+    public String fill_contentPane(String[] pathComponents, String queryStr) throws SAXException, ParserConfigurationException, XPathExpressionException, IOException, TransformerException {
         StringBuilder out = new StringBuilder();
         String fileName = getFileName(pathComponents);
 
@@ -66,10 +67,11 @@ public class RawController extends PIMDefaultController implements ControllerObj
                 out.append("<input name='xpath' value='" + xpath + "'></input>");
                 out.append("<input type='submit'></input>");
                 out.append("</form>\n");
-                out.append("results:<br>");
-                out.append("<pre>");
+                out.append("results:<br>\n");
+                out.append("<pre>\n");
                 String results = Utility.runXPathOnString(fileContents, xpath);
-                out.append(results);
+                String escapedResults = Utility.escapeXML(results);
+                out.append(escapedResults);
                 out.append("</pre>");
             } else {
                 out.append("<form>\n");

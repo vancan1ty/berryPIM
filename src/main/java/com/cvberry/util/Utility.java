@@ -10,6 +10,9 @@ import javax.swing.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -21,6 +24,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -116,7 +120,8 @@ public class Utility {
 
     }
 
-    public static String runXPathOnString(String documentStr, String query) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
+    public static String runXPathOnString(String documentStr, String query) throws IOException, SAXException,
+            ParserConfigurationException, XPathExpressionException, TransformerException {
         DocumentBuilderFactory factory = Utility.getConfiguredDocBuilderFactory();
 
         //Now use the factory to create a DOM parser, a.k.a. DocumentBuilder
@@ -128,8 +133,43 @@ public class Utility {
         document = parser.parse(new InputSource(new StringReader(documentStr)));
 
         XPath xPath = XPathFactory.newInstance().newXPath();
-        String result = xPath.compile(xpathStr).evaluate(document);
-        return result;
+        NodeList result = (NodeList) xPath.compile(xpathStr).evaluate(document,XPathConstants.NODESET);
+        StringBuilder out = new StringBuilder();
+        for (int i = 0; i< result.getLength(); i++) {
+           out.append(nodeToString(result.item(i)));
+        }
+        return out.toString();
+    }
+
+    static Transformer transformer = null;
+
+   //http://stackoverflow.com/questions/4412848/xml-node-to-string-in-java
+    private static String nodeToString(Node node) throws TransformerException {
+        StringWriter sw = new StringWriter();
+        removeEmptyText(node);
+        if(transformer==null) {
+            transformer = TransformerFactory.newInstance().newTransformer();
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+        }
+
+        transformer.transform(new DOMSource(node), new StreamResult(sw));
+        return sw.toString();
+    }
+
+
+    public static void removeEmptyText(Node node){
+        Node child = node.getFirstChild();
+        while(child!=null){
+            Node sibling = child.getNextSibling();
+            if(child.getNodeType()==Node.TEXT_NODE){
+                if(child.getTextContent().trim().isEmpty())
+                    node.removeChild(child);
+            }else
+                removeEmptyText(child);
+            child = sibling;
+        }
     }
 
     static public String join(String joiner, Collection<String> strings) {
@@ -144,6 +184,31 @@ public class Utility {
             sb.append(item);
         }
         return sb.toString();
+    }
+
+    /**
+     * [CB 1/6/16] REMEMBER: revisit this if berryPIM is ever the basis for a public facing app -- may need
+     * more complex rules to prevent XSS.
+     * http://stackoverflow.com/questions/1265282/recommended-method-for-escaping-html-in-java
+     * @param s
+     * @return
+     */
+    public static String escapeXML(String s) {
+        if (s==null) {
+            return null;
+        }
+        StringBuilder out = new StringBuilder(Math.max(16, s.length()));
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (c > 127 || c == '"' || c == '<' || c == '>' || c == '&') {
+                out.append("&#");
+                out.append((int) c);
+                out.append(';');
+            } else {
+                out.append(c);
+            }
+        }
+        return out.toString();
     }
 
 }
