@@ -14,22 +14,26 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 /**
  * Created by vancan1ty on 1/4/2016.
  */
 public class Bootstrap {
 
-    public static void bootstrap(String rootPath) throws IOException, SAXException, ParserConfigurationException,
+    public static void bootstrap(String rootPath) throws IllegalAccessException, ParserConfigurationException, IOException, XPathExpressionException, InstantiationException, URISyntaxException, SAXException, ClassNotFoundException {
+        bootstrap(rootPath,null);
+    }
+    public static void bootstrap(String rootPath,String optionalFilesRoot) throws IOException, SAXException, ParserConfigurationException,
             XPathExpressionException, ClassNotFoundException, IllegalAccessException, InstantiationException, URISyntaxException {
 
         Anchor myAnchor = Anchor.getInstance();
         myAnchor.setRootPath(rootPath);
 
         String prospectivePimFilesRoot = System.getProperty("BERRYPIM_DATA_ROOT");
-        if (prospectivePimFilesRoot == null) {
-            myAnchor.setPIMFilesRoot("../berryData");
+        if(optionalFilesRoot!=null) {
+            myAnchor.setPIMFilesRoot(optionalFilesRoot);
+        } else if (prospectivePimFilesRoot == null) {
+            myAnchor.setPIMFilesRoot("berryData");
         } else {
             myAnchor.setPIMFilesRoot(prospectivePimFilesRoot);
         }
@@ -60,7 +64,7 @@ public class Bootstrap {
         System.out.println(rawOutput);
         String[] classes = rawOutput.split("\\s+");
         System.out.println("Configurator classes to load: ");
-        System.out.println(Arrays.stream(classes).collect(Collectors.joining(",")).toString());
+        System.out.println(Utility.join(",",Arrays.asList(classes)));
         for (int i = 0; i < classes.length; i++) {
             Class configClass = Class.forName(classes[i]);
             Configurator configurator = (Configurator) configClass.newInstance();

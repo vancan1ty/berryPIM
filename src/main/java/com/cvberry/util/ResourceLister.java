@@ -20,7 +20,7 @@ import java.util.zip.ZipFile;
 public class ResourceLister {
 
     public static String listResources(Pattern pattern) {
-        return getResources(pattern).stream().collect(Collectors.joining(", "));
+        return Utility.join(", ",getResources(pattern));
     }
 
     /**

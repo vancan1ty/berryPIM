@@ -29,6 +29,6 @@ public class AppTest {
     @Test
     public void testBootstrap() throws SAXException, ParserConfigurationException, XPathExpressionException, IOException,
             IllegalAccessException, InstantiationException, ClassNotFoundException, URISyntaxException {
-        Bootstrap.bootstrap("/berryPIM");
+        Bootstrap.bootstrap("/berryPIM","../berryData");
     }
 }

@@ -30,7 +30,13 @@ public class App {
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
 
-        Server jettyServer = new Server(8080);
+        String SysJETTYPORT = System.getProperty("JETTYPORT");
+        int port = 8080;
+        System.out.println("SysJETTYPORT: " + SysJETTYPORT);
+        if(SysJETTYPORT!=null && !SysJETTYPORT.isEmpty()) {
+           port = Integer.parseInt(SysJETTYPORT);
+        }
+        Server jettyServer = new Server(port);
         jettyServer.setHandler(context);
 
         ClassLoader loader = App.class.getClassLoader();

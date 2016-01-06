@@ -25,10 +25,8 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.AbstractMap;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by vancan1ty on 1/2/2016.
@@ -133,4 +131,19 @@ public class Utility {
         String result = xPath.compile(xpathStr).evaluate(document);
         return result;
     }
+
+    static public String join(String joiner, Collection<String> strings) {
+        StringBuilder sb = new StringBuilder();
+        boolean first = true;
+        for (String item : strings) {
+            if (first) {
+                first = false;
+            } else {
+                sb.append(joiner);
+            }
+            sb.append(item);
+        }
+        return sb.toString();
+    }
+
 }
