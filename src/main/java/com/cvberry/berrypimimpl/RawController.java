@@ -55,6 +55,9 @@ public class RawController extends PIMDefaultController implements ControllerObj
         StringBuilder out = new StringBuilder();
         String fileName = getFileName(pathComponents);
         String actionStr=Utility.getFirstQParamResult(queryParams,"action");
+        if (actionStr!=null && actionStr.equals("reload")) {
+            filesManager.readInAllFiles();
+        }
         String dataStr = Utility.getFirstQParamResult(queryParams,"data");
         displayEditorForFile(out, fileName, actionStr, dataStr);
         return out.toString();
@@ -67,7 +70,8 @@ public class RawController extends PIMDefaultController implements ControllerObj
             }
             StringBuilder resultsStrb = new StringBuilder();
             boolean success =  filesManager.saveNewContentsToFile(fileNameToSave,dataBody,resultsStrb,false);
-            if(success) {
+            boolean success2= filesManager.readInAllFilesSafe(resultsStrb);
+            if(success && success2) {
                 return resultsStrb.toString();
             } else {
                 throw new RuntimeException("file save failed! " + resultsStrb.toString());
@@ -77,6 +81,7 @@ public class RawController extends PIMDefaultController implements ControllerObj
     public void displayEditorForFile(StringBuilder out, String fileName, String action, String dataStr) throws SAXException, TransformerException,
             ParserConfigurationException, XPathExpressionException, IOException {
                 String fileContents = filesManager.getFileContents(fileName);
+        out.append("<span id='fileName' style='display:none'>"+fileName+"</span>");
         out.append("<textarea class='fullsize' id='mainEditor'>");
         out.append(fileContents);
         out.append("</textarea><br>");

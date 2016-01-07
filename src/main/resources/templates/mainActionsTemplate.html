@@ -1,12 +1,13 @@
-<a href="?reload=true">
+<span style="padding-right: 5px; display: none" id="loadingStr">IO</span>
+<a href="javascript:;" id="saveLink" onclick="saveEditor()">
     <label>Save</label>
     <svg class="lnr fa-floppy"><use xlink:href="#fa-floppy"></use></svg>
 </a>
-<a href="?reload=true">
+<a href="?action=reload" id="reloadLink">
     <label>Refresh</label>
     <svg class="lnr lnr-sync"><use xlink:href="#lnr-sync"></use></svg>
 </a>
-<a href="?sync=true">
+<a href="?action=sync" id="syncLink">
     <label>Sync With Server</label>
     <svg class="lnr lnr-cloud-sync"><use xlink:href="#lnr-cloud-sync"></use></svg>
 </a>

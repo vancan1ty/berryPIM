@@ -119,7 +119,7 @@ public class DataFilesManager {
             return false;
         }
 
-        toWriteTo.append(fileName + " has been saved.  Please click ok and you will be redirected back to your previous page.");
+        toWriteTo.append(fileName + " has been saved.");
         return true;
     }
 
