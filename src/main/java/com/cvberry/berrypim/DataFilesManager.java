@@ -47,7 +47,6 @@ public class DataFilesManager {
 
 
     /**
-     *
      * @param fileName
      * @param toWriteTo can be null
      * @return
@@ -56,10 +55,10 @@ public class DataFilesManager {
         FileInfoObj fileObj = this.fileContentsMap.get(fileName);
         if (fileObj == null) {
             String probStr = "file '" + fileName + "' not found in app's records!";
-            if(toWriteTo != null) {
+            if (toWriteTo != null) {
                 toWriteTo.append(probStr);
             }
-                return false;
+            return false;
         }
 
         String newContents = null;
@@ -67,7 +66,7 @@ public class DataFilesManager {
             newContents = Utility.slurp(fileObj.actualFile.getPath());
         } catch (IOException e) {
             e.printStackTrace();
-            if(toWriteTo != null) {
+            if (toWriteTo != null) {
                 toWriteTo.append(e.getMessage());
             }
             return false;
@@ -100,8 +99,8 @@ public class DataFilesManager {
             return false;
         }
 
-        if(fileModified) {
-            if(overrideModification) {//keep going
+        if (fileModified) {
+            if (overrideModification) {//keep going
 
             } else { //abort
                 toWriteTo.append("File has been modified!  Please refresh your file contents, " +
@@ -111,12 +110,27 @@ public class DataFilesManager {
         }
 
         FileInfoObj fileObj = this.fileContentsMap.get(fileName);
+        File actualFile = null;
+        if (fileObj == null) {
+            //then we have to make a new one
+            String newFilePath = rootFile.getPath() + File.separator + fileName;
+            File newFile = new File(newFilePath);
+            actualFile = newFile;
+        } else {
+            actualFile = fileObj.actualFile;
+        }
+
         try {
-            Utility.spit(fileObj.actualFile.getPath(),dataBody);
+            Utility.spit(actualFile.getPath(), dataBody);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             toWriteTo.append(e.getMessage());
             return false;
+        }
+
+        if (fileObj == null) {
+            fileObj = new FileInfoObj(actualFile, actualFile.lastModified(), dataBody);
+            this.fileContentsMap.put(fileName,fileObj);
         }
 
         toWriteTo.append(fileName + " has been saved.");
@@ -126,11 +140,12 @@ public class DataFilesManager {
     public boolean getHasFileBeenModified(String fileName) throws FileNotFoundException {
         FileInfoObj obj = fileContentsMap.get(fileName);
         if (obj == null) {
-            throw new FileNotFoundException("file '" + fileName + "' not found in app's records!");
+            return false; //clearly not modified, as it doesn't exist.
+            //throw new FileNotFoundException("file '" + fileName + "' not found in app's records!");
         }
         long origLMTime = obj.lastModifiedTime;
         long newLMTime = obj.actualFile.lastModified();
-        if(newLMTime == origLMTime) {
+        if (newLMTime == origLMTime) {
             return false;
         } else {
             return true;
@@ -138,10 +153,27 @@ public class DataFilesManager {
     }
 
     public String getFileContents(String fileName) {
-        return fileContentsMap.get(fileName).fileContents;
+        FileInfoObj obj = fileContentsMap.get(fileName);
+        if (obj != null) {
+            return obj.fileContents;
+        } else {
+            return null;
+        }
     }
 
     public List<String> listDataFiles() {
+        List<String> fileList = new ArrayList<>(fileContentsMap.keySet());
+        List<String> outFileList = new ArrayList<>();
+        for (String s : fileList) {
+            if (!s.endsWith(".bPIMD")) {
+                outFileList.add(s);
+            }
+        }
+        Collections.sort(outFileList);
+        return outFileList;
+    }
+
+     public List<String> listAllFiles() {
         List<String> fileList = new ArrayList<>(fileContentsMap.keySet());
         Collections.sort(fileList);
         return fileList;

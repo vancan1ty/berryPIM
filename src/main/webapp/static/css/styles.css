@@ -257,14 +257,23 @@ input.wideinput {
     #rightside {
         text-align: left;
         position: absolute;
-
     }
-    #rightside>ul {
+    #rsCSSHelper {
         position: relative;
         left: 820px;
+        bottom: 12px;
         display: inline;
         float: right
     }
+
+}
+
+#rsCSSHelper label {
+        font-weight: bold;
+}
+
+#rsCSSHelper>ul {
+    background-color: #eeeeee;
 }
 
 #rightside ul {
@@ -272,6 +281,10 @@ input.wideinput {
      padding-left: 0px;
 }
 
+#rightside ul li{
+    min-height: 20px;
+    min-width: 50px;
+}
 table.center {
     text-align: center;
 }

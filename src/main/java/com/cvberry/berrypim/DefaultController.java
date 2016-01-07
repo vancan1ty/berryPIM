@@ -92,6 +92,10 @@ public class DefaultController implements ControllerObject {
         return "I am content.";
     }
 
+    public String fill_rightSideList(String[] pathComponents, Map<String, String[]> queryParams, String dataBody) throws Exception {
+        return "";
+    }
+
     public String api_echo(String[] pathComponents, Map<String, String[]> queryParams, String dataBody) throws Exception {
         return dataBody;
     }

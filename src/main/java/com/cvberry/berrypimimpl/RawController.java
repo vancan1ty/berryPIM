@@ -68,6 +68,15 @@ public class RawController extends PIMDefaultController implements ControllerObj
             if (fileNameToSave == null) {
                 throw new RuntimeException("file save failed! -- name of file not specified.");
             }
+            if (fileNameToSave.endsWith(".bPIMD")) {//this is one of our special helper files
+                //only save if file already exists or if the string is non-empty
+                String oldContents=filesManager.getFileContents(fileNameToSave);
+                if(dataBody != null && (oldContents!=null || !dataBody.isEmpty())) {//then we should save
+
+                } else {
+                    return "no save necessary for this non-existent helper file.";
+                }
+            }
             StringBuilder resultsStrb = new StringBuilder();
             boolean success =  filesManager.saveNewContentsToFile(fileNameToSave,dataBody,resultsStrb,false);
             boolean success2= filesManager.readInAllFilesSafe(resultsStrb);
@@ -109,5 +118,29 @@ public class RawController extends PIMDefaultController implements ControllerObj
             }
         }
         out.append("<script src="+myAnchor.getRootPath()+"\"/static/js/rawEditor.js\"></script>");
+    }
+
+    @Override
+    public String fill_rightSideList(String[] pathComponents, Map<String, String[]> queryParams, String dataBody) throws Exception {
+        String fileName = getFileName(pathComponents);
+        String fileContents = filesManager.getFileContents(fileName+".bPIMD");
+        StringBuilder out = new StringBuilder();
+        out.append("<div id='rsCSSHelper'>");
+        out.append("<label>Notes / XPath Queries</label>");
+        boolean helperInitialized = false;
+        out.append("<ul id='savedQueries' contentEditable='true'>");
+        if(fileContents!=null) {
+            helperInitialized = true;
+            String[] lines = fileContents.trim().split("\n");
+            for (String s : lines) {
+                out.append("<li>"+Utility.escapeXML(s)+"</li>");
+            }
+        } else {
+            out.append("<li> </li>");
+        }
+        out.append("</ul>");
+        out.append("<span style='display:none' id='helperInitialized'>"+helperInitialized+"</span>");
+        out.append("</div>");
+        return out.toString();
     }
 }
