@@ -90,7 +90,8 @@ public class RawController extends PIMDefaultController implements ControllerObj
             out.append("<b>Run XPath</b>\n");
             if (action != null && action.equals("xpath")) {
                 out.append("<form>\n");
-                out.append("<input name='xpath' value='" + dataStr + "'></input>");
+                out.append("<input type='hidden' name='action' value='xpath'></input>");
+                out.append("<input class='wideinput' name='data' value='" + dataStr + "'></input>");
                 out.append("<input type='submit'></input>");
                 out.append("</form>\n");
                 out.append("results:<br>\n");
@@ -101,7 +102,8 @@ public class RawController extends PIMDefaultController implements ControllerObj
                 out.append("</pre>");
             } else {
                 out.append("<form>\n");
-                out.append("<input name='xpath'></input>");
+                out.append("<input type='hidden' name='action' value='xpath'></input>");
+                out.append("<input name='data'></input>");
                 out.append("<input type='submit'></input>");
                 out.append("</form>\n");
             }

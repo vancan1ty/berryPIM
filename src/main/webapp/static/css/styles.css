@@ -58,6 +58,7 @@
     border: 1px solid gray;
     border-radius: 0px 4px 4px 4px;
     margin-top: 10px;
+
 }
 
 @media screen and (min-height: 550px) {
@@ -72,7 +73,7 @@
 
 #toptabs ul {
     position: relative;
-    bottom: 27px;
+    bottom: 29px;
     right: 40px;
 }
 
@@ -210,18 +211,65 @@ ul.legs li {
 
 /*CB overriden below for normal screens*/
 .fullsize {
-        width: 100%;
+        width: 98%;
         min-height: 150px;
 }
 
+textarea#mainEditor {
+    resize: both;
+    position: relative;
+    z-index: 100;
+    min-height: 150px;
+    min-width: 20px;
+}
+
+input.wideinput {
+    width: 200px;
+}
+
+@media screen and (max-width: 900px) {
+    #rightside {
+        text-align: left;
+        position: static;
+        display: block;
+    }
+}
+
 @media screen and (min-width: 900px) {
+    #viewport {
+        width: 800px;
+    }
     .fullsize {
         width: 781px;
         height: 500px;
     }
+
     table.fullspan {
         width: 781px;
     }
+    input.wideinput {
+        width: 500px;
+    }
+
+    textarea#mainEditor {
+    }
+
+    #rightside {
+        text-align: left;
+        position: absolute;
+
+    }
+    #rightside>ul {
+        position: relative;
+        left: 820px;
+        display: inline;
+        float: right
+    }
+}
+
+#rightside ul {
+     list-style: none;
+     padding-left: 0px;
 }
 
 table.center {
@@ -231,3 +279,6 @@ table.center {
 table.center table {
     display:inline-block;
 }
+
+
+
