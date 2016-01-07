@@ -57,7 +57,10 @@ public class Dispatcher {
         }
         //CB this is usually passed in the POST body but I guess you could pass
         //it in the get pamaters as well.
-        String dataBody = request.getParameter("data");
+        String dataBody = null;
+        if(request.getParameter("data")!=null) {
+            dataBody = URLDecoder.decode(request.getParameter("data"),"UTF-8");
+        }
         Map<String,String[]> params = request.getParameterMap();
         String myOutput = controller.control(getPathComponents(pathStr), params, mainTemplate,dataBody);
         response.getOutputStream().print(myOutput);

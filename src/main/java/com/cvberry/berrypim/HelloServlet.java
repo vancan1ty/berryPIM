@@ -123,11 +123,7 @@ public class HelloServlet extends HttpServlet {
             fullReqStr = request.getPathInfo();
         }
         System.out.println(fullReqStr);
-        try {
-            myAnchor.getDispatcher().dispatch(fullReqStr, templated, request, response);
-        } catch (Exception e) {
-            response.setStatus(500);
-        }
+        myAnchor.getDispatcher().dispatch(fullReqStr, templated, request, response);
         //out.println(ResourceLister.getResources(Pattern.compile(".*\\.html")).stream().collect(Collectors.joining("\n")));
         //out.println("<textarea>");
         //out.println(contactsDocStr);

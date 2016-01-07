@@ -11,6 +11,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.List;
 import java.util.Map;
 
@@ -52,35 +53,28 @@ public class RawController extends PIMDefaultController implements ControllerObj
     public String fill_contentPane(String[] pathComponents, Map<String, String[]> queryParams, String dataBody)
             throws SAXException, ParserConfigurationException, XPathExpressionException, IOException, TransformerException {
         StringBuilder out = new StringBuilder();
-        String action = null;
-        if (queryParams.get("action")!=null && queryParams.get("action").length>0) {
-           action = queryParams.get("action")[0];
-        }
-        if (action != null && action.equals("save")) {
-            String[] fileNamesToSave = queryParams.get("file");
-            String fileNameToSave = null;
-            if (fileNamesToSave != null && fileNamesToSave.length > 0) {
-               fileNameToSave = fileNamesToSave[0];
-            } else {
-                throw new RuntimeException("file save failed! -- name of file not specified.");
-            }
-
-            StringBuilder resultsStrb = new StringBuilder();
-            boolean success =  filesManager.saveNewContentsToFile(fileNameToSave,dataBody,resultsStrb,false);
-            if(success) {
-                out.append(resultsStrb);
-            } else {
-                throw new RuntimeException("file save failed! " + resultsStrb.toString());
-            }
-        } else {
-            String fileName = getFileName(pathComponents);
-            displayEditorForFile(out, fileName, action);
-        }
+        String fileName = getFileName(pathComponents);
+        String actionStr=Utility.getFirstQParamResult(queryParams,"action");
+        String dataStr = Utility.getFirstQParamResult(queryParams,"data");
+        displayEditorForFile(out, fileName, actionStr, dataStr);
         return out.toString();
     }
 
+    public String api_save(String[] pathComponents, Map<String, String[]> queryParams, String dataBody) {
+            String fileNameToSave = Utility.getFirstQParamResult(queryParams,"file");
+            if (fileNameToSave == null) {
+                throw new RuntimeException("file save failed! -- name of file not specified.");
+            }
+            StringBuilder resultsStrb = new StringBuilder();
+            boolean success =  filesManager.saveNewContentsToFile(fileNameToSave,dataBody,resultsStrb,false);
+            if(success) {
+                return resultsStrb.toString();
+            } else {
+                throw new RuntimeException("file save failed! " + resultsStrb.toString());
+            }
+    }
 
-    public void displayEditorForFile(StringBuilder out, String fileName, String action) throws SAXException, TransformerException,
+    public void displayEditorForFile(StringBuilder out, String fileName, String action, String dataStr) throws SAXException, TransformerException,
             ParserConfigurationException, XPathExpressionException, IOException {
                 String fileContents = filesManager.getFileContents(fileName);
         out.append("<textarea class='fullsize' id='mainEditor'>");
@@ -89,16 +83,14 @@ public class RawController extends PIMDefaultController implements ControllerObj
 
         if (fileName.endsWith(".xml") || fileName.endsWith(".xsd")) {
             out.append("<b>Run XPath</b>\n");
-
-            if (action != null && action.startsWith("xpath")) {
-                String xpath = action.substring(action.indexOf("=") + 1);
+            if (action != null && action.equals("xpath")) {
                 out.append("<form>\n");
-                out.append("<input name='xpath' value='" + xpath + "'></input>");
+                out.append("<input name='xpath' value='" + dataStr + "'></input>");
                 out.append("<input type='submit'></input>");
                 out.append("</form>\n");
                 out.append("results:<br>\n");
                 out.append("<pre>\n");
-                String results = Utility.runXPathOnString(fileContents, xpath);
+                String results = Utility.runXPathOnString(fileContents, dataStr);
                 String escapedResults = Utility.escapeXML(results);
                 out.append(escapedResults);
                 out.append("</pre>");
