@@ -1,5 +1,7 @@
 package com.cvberry.berrypim;
 
+import com.cvberry.util.Utility;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -59,7 +61,7 @@ public class Dispatcher {
         //it in the get pamaters as well.
         String dataBody = null;
         if(request.getParameter("data")!=null) {
-            dataBody = URLDecoder.decode(request.getParameter("data"),"UTF-8");
+            dataBody = Utility.realDecode(request.getParameter("data"));
         }
         Map<String,String[]> params = request.getParameterMap();
         String myOutput = controller.control(getPathComponents(pathStr), params, mainTemplate,dataBody);

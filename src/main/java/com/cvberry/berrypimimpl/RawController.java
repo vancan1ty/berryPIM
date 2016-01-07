@@ -22,6 +22,7 @@ public class RawController extends PIMDefaultController implements ControllerObj
 
     Anchor myAnchor;
     DataFilesManager filesManager;
+    public String UNIVERSALFILENAME = null;
 
     public RawController(String controllerBase) {
         myAnchor = Anchor.getInstance();
@@ -53,7 +54,12 @@ public class RawController extends PIMDefaultController implements ControllerObj
     public String fill_contentPane(String[] pathComponents, Map<String, String[]> queryParams, String dataBody)
             throws SAXException, ParserConfigurationException, XPathExpressionException, IOException, TransformerException {
         StringBuilder out = new StringBuilder();
-        String fileName = getFileName(pathComponents);
+        String fileName;
+        if (UNIVERSALFILENAME != null) {
+           fileName = UNIVERSALFILENAME;
+        } else {
+            fileName = getFileName(pathComponents);
+        }
         String actionStr=Utility.getFirstQParamResult(queryParams,"action");
         if (actionStr!=null && actionStr.equals("reload")) {
             filesManager.readInAllFiles();
@@ -122,7 +128,12 @@ public class RawController extends PIMDefaultController implements ControllerObj
 
     @Override
     public String fill_rightSideList(String[] pathComponents, Map<String, String[]> queryParams, String dataBody) throws Exception {
-        String fileName = getFileName(pathComponents);
+        String fileName;
+        if (UNIVERSALFILENAME != null) {
+           fileName = UNIVERSALFILENAME;
+        } else {
+            fileName = getFileName(pathComponents);
+        }
         String fileContents = filesManager.getFileContents(fileName+".bPIMD");
         StringBuilder out = new StringBuilder();
         out.append("<div id='rsCSSHelper'>");

@@ -17,7 +17,9 @@ public class PIMDefaultController extends DefaultController implements Controlle
         String[] starter = {
                 "raw", "Raw",
                 "dashboard", "Dashboard",
-                "contacts", "Contacts"
+                "calendar", "Calendar",
+                "contacts", "Contacts",
+                "notes", "Notes"
         };
         return Utility.tupleizeArray(starter);
     }

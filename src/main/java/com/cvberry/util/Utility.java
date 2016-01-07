@@ -238,4 +238,11 @@ public class Utility {
         }
     }
 
+     public static String realDecode(String toDecode) throws UnsupportedEncodingException {
+         String s1 = toDecode.replaceAll("%(?![0-9a-fA-F]{2})", "%25");
+         String s2 = s1.replaceAll("\\+", "%2B");
+         String s3 = URLDecoder.decode(s2, "utf-8");
+         return s3;
+   }
+
 }

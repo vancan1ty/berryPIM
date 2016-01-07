@@ -16,8 +16,11 @@ public class PIMConfigurator implements Configurator {
         myAnchor.getDispatcher().addDispatchPath("dashboard",new DashboardController("dashboard/"));
         myAnchor.getDispatcher().addDispatchPath("raw",new RawController("raw/"));
         myAnchor.getDispatcher().addDispatchPath("",new DashboardController("dashboard/"));
-        myAnchor.getDispatcher().addDispatchPath("contacts",new ContactsController("contacts/"));
-        myAnchor.getDispatcher().addDispatchPath("contacts2",new ContactsController2("contacts2/"));
+        myAnchor.getDispatcher().addDispatchPath("calendar",new CalendarController("calendar/"));
+        myAnchor.getDispatcher().addDispatchPath("contacts",new ContactsController3("contacts/"));
+        myAnchor.getDispatcher().addDispatchPath("notes",new NotesController("notes/"));
+        //myAnchor.getDispatcher().addDispatchPath("contacts",new ContactsController("contacts/"));
+        //myAnchor.getDispatcher().addDispatchPath("contacts2",new ContactsController2("contacts2/"));
     }
 
 }
