@@ -47,7 +47,7 @@ public class Utility {
     }
 
     public static void spit(String path, String newContents) throws FileNotFoundException {
-        try(PrintWriter out = new PrintWriter(path)) {
+        try (PrintWriter out = new PrintWriter(path)) {
             out.println(newContents);
         }
     }
@@ -228,6 +228,14 @@ public class Utility {
             query_pairs.put(URLDecoder.decode(pair.substring(0, idx), "UTF-8"), URLDecoder.decode(pair.substring(idx + 1), "UTF-8"));
         }
         return query_pairs;
+    }
+
+    public static String getFirstQParamResult(Map<String, String[]> queryParams, String key) {
+        if (queryParams.containsKey(key) && queryParams.get(key).length > 0) {
+            return queryParams.get(key)[0];
+        } else {
+            return null;
+        }
     }
 
 }

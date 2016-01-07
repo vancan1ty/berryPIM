@@ -100,6 +100,7 @@ public class HelloServlet extends HttpServlet {
             fullReqStr = request.getPathInfo();
         }
         System.out.println(fullReqStr);
+
         myAnchor.getDispatcher().dispatch(fullReqStr,"{{contentPane}}",request,response);
 
     }
@@ -122,7 +123,11 @@ public class HelloServlet extends HttpServlet {
             fullReqStr = request.getPathInfo();
         }
         System.out.println(fullReqStr);
-        myAnchor.getDispatcher().dispatch(fullReqStr,templated,request,response);
+        try {
+            myAnchor.getDispatcher().dispatch(fullReqStr, templated, request, response);
+        } catch (Exception e) {
+            response.setStatus(500);
+        }
         //out.println(ResourceLister.getResources(Pattern.compile(".*\\.html")).stream().collect(Collectors.joining("\n")));
         //out.println("<textarea>");
         //out.println(contactsDocStr);

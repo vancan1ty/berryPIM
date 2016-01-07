@@ -2,6 +2,10 @@ package com.cvberry.berrypim;
 
 import com.cvberry.util.Utility;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +24,25 @@ public class DefaultController implements ControllerObject {
     }
 
     public String control(String[] pathComponents, Map<String, String[]> queryParams, String template, String dataBody) {
-        String out = TemplateEngine.templateWController(template, this, pathComponents, queryParams, dataBody);
+        String out = null;
+        String restStr = Utility.getFirstQParamResult(queryParams,"rest");
+        if (restStr != null) { //then bypass templating, treat this as an api request.
+
+            String actionStr = Utility.getFirstQParamResult(queryParams,"action");
+            if (actionStr == null) {
+                throw new RuntimeException("no action specified.");
+            }
+
+            String methodName = "api_"+actionStr;
+            try {
+                Method toCall = this.getClass().getMethod(methodName, String[].class, Map.class, String.class);
+                out = (String) toCall.invoke(this, pathComponents, queryParams, dataBody);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            out = TemplateEngine.templateWController(template, this, pathComponents, queryParams, dataBody);
+        }
         return out;
     }
 
@@ -68,6 +90,10 @@ public class DefaultController implements ControllerObject {
 
     public String fill_contentPane(String[] pathComponents, Map<String, String[]> queryParams, String dataBody) throws Exception {
         return "I am content.";
+    }
+
+    public String api_echo(String[] pathComponents, Map<String, String[]> queryParams, String dataBody) throws Exception {
+        return dataBody;
     }
 
     public List<Map.Entry<String, String>> getLTabItems() {

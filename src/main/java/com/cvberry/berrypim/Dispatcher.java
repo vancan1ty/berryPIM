@@ -27,8 +27,14 @@ public class Dispatcher {
         }
 
         if (pathStr.endsWith(".png")) {
+            try {
+                myAnchor.getImageStreamer().getImage(pathStr, response);
+            } catch(Exception e) {
+               e.printStackTrace();
+                response.setStatus(500);
+            }
+
             response.setStatus(200);
-            myAnchor.getImageStreamer().getImage(pathStr, response);
             return;
         }
 
