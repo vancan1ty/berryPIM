@@ -19,12 +19,12 @@ public class DefaultController implements ControllerObject {
        rootPathStr = myAnchor.getRootPath()+"/";
     }
 
-    public String control(String[] pathComponents, String queryStr, String template) {
-        String out = TemplateEngine.templateWController(template, this, pathComponents, queryStr);
+    public String control(String[] pathComponents, Map<String, String[]> queryParams, String template, String dataBody) {
+        String out = TemplateEngine.templateWController(template, this, pathComponents, queryParams, dataBody);
         return out;
     }
 
-    public String fill_ltabsItems(String[] pathComponents, String queryStr) {
+    public String fill_ltabsItems(String[] pathComponents, Map<String, String[]> queryParams, String dataBody) {
         String selectorPath = (pathComponents[0] == null || pathComponents[0].isEmpty()) ?
                 getDefaultTab() : pathComponents[0];
         List<Map.Entry<String,String>> items = getLTabItems();
@@ -44,7 +44,7 @@ public class DefaultController implements ControllerObject {
 //                "                    <li><a href=\"searchContacts\">Search Contacts</a></li>";
     }
 
-    public String fill_topTabsItems(String[] pathComponents, String queryStr) {
+    public String fill_topTabsItems(String[] pathComponents, Map<String, String[]> queryParams, String dataBody) {
         List<Map.Entry<String,String>> items = getTopTabsItems();
         String selectorPath = (pathComponents.length < 2 || pathComponents[1] == null || pathComponents[1].isEmpty()) ?
                 items.get(0).getKey() : pathComponents[1];
@@ -66,7 +66,7 @@ public class DefaultController implements ControllerObject {
 
     }
 
-    public String fill_contentPane(String[] pathComponents, String queryStr) throws Exception {
+    public String fill_contentPane(String[] pathComponents, Map<String, String[]> queryParams, String dataBody) throws Exception {
         return "I am content.";
     }
 

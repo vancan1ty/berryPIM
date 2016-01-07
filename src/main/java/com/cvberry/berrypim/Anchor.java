@@ -35,6 +35,7 @@ public class Anchor {
     public void setDataFilesManager(DataFilesManager dataFilesManager) {this.dataFilesManager = dataFilesManager;}
 
     //[CB] set on servlet initialization
+    //root path without ending slash -- e.g. "/berryPIM"
     private String rootPath;
     public String getRootPath() {return rootPath;}
     public void setRootPath(String rootPath) {this.rootPath = rootPath;}

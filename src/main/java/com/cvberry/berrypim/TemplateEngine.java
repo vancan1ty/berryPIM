@@ -20,7 +20,7 @@ public class TemplateEngine {
     }
 
     public static String templateWController(String templateStr, ControllerObject toUse, String[] pathComponents,
-                                             String queryStr) {
+                                             Map<String, String[]> queryStr, String dataBody) {
 
         StringBuilder errorBuffer = new StringBuilder();
         StringBuffer theBuf = new StringBuffer();
@@ -31,8 +31,8 @@ public class TemplateEngine {
             String methodName = "fill_"+templateName;
             String iTemplateStr = "";
             try {
-                Method toCall = toUse.getClass().getMethod(methodName, String[].class, String.class);
-                iTemplateStr = (String) toCall.invoke(toUse,pathComponents,queryStr);
+                Method toCall = toUse.getClass().getMethod(methodName, String[].class, Map.class, String.class);
+                iTemplateStr = (String) toCall.invoke(toUse,pathComponents,queryStr,dataBody);
 
             } catch (NoSuchMethodException |InvocationTargetException | IllegalAccessException e) {
                 StringWriter sw = new StringWriter();

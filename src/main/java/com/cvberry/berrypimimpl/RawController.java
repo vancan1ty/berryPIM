@@ -4,15 +4,13 @@ import com.cvberry.berrypim.Anchor;
 import com.cvberry.berrypim.ControllerObject;
 import com.cvberry.berrypim.DataFilesManager;
 import com.cvberry.util.Utility;
-import com.sun.management.OperatingSystemMXBean;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
-import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +28,7 @@ public class RawController extends PIMDefaultController implements ControllerObj
         this.controllerBase = controllerBase;
     }
 
+    @Override
     public List<Map.Entry<String, String>> getTopTabsItems() {
         List<String> fileNames = filesManager.listDataFiles();
         String[] starter = new String[fileNames.size() * 2];
@@ -49,20 +48,50 @@ public class RawController extends PIMDefaultController implements ControllerObj
         return Utility.getPathComponentOrDefault(pathComponents, 1, getTopTabsItems().get(0).getKey());
     }
 
-    public String fill_contentPane(String[] pathComponents, String queryStr) throws SAXException, ParserConfigurationException, XPathExpressionException, IOException, TransformerException {
+    @Override
+    public String fill_contentPane(String[] pathComponents, Map<String, String[]> queryParams, String dataBody)
+            throws SAXException, ParserConfigurationException, XPathExpressionException, IOException, TransformerException {
         StringBuilder out = new StringBuilder();
-        String fileName = getFileName(pathComponents);
+        String action = null;
+        if (queryParams.get("action")!=null && queryParams.get("action").length>0) {
+           action = queryParams.get("action")[0];
+        }
+        if (action != null && action.equals("save")) {
+            String[] fileNamesToSave = queryParams.get("file");
+            String fileNameToSave = null;
+            if (fileNamesToSave != null && fileNamesToSave.length > 0) {
+               fileNameToSave = fileNamesToSave[0];
+            } else {
+                throw new RuntimeException("file save failed! -- name of file not specified.");
+            }
 
-        String fileContents = filesManager.getFileContents(fileName);
-        out.append("<textarea class='fullsize'>");
+            StringBuilder resultsStrb = new StringBuilder();
+            boolean success =  filesManager.saveNewContentsToFile(fileNameToSave,dataBody,resultsStrb,false);
+            if(success) {
+                out.append(resultsStrb);
+            } else {
+                throw new RuntimeException("file save failed! " + resultsStrb.toString());
+            }
+        } else {
+            String fileName = getFileName(pathComponents);
+            displayEditorForFile(out, fileName, action);
+        }
+        return out.toString();
+    }
+
+
+    public void displayEditorForFile(StringBuilder out, String fileName, String action) throws SAXException, TransformerException,
+            ParserConfigurationException, XPathExpressionException, IOException {
+                String fileContents = filesManager.getFileContents(fileName);
+        out.append("<textarea class='fullsize' id='mainEditor'>");
         out.append(fileContents);
         out.append("</textarea><br>");
 
         if (fileName.endsWith(".xml") || fileName.endsWith(".xsd")) {
             out.append("<b>Run XPath</b>\n");
 
-            if (queryStr != null && queryStr.startsWith("xpath")) {
-                String xpath = queryStr.substring(queryStr.indexOf("=") + 1);
+            if (action != null && action.startsWith("xpath")) {
+                String xpath = action.substring(action.indexOf("=") + 1);
                 out.append("<form>\n");
                 out.append("<input name='xpath' value='" + xpath + "'></input>");
                 out.append("<input type='submit'></input>");
@@ -80,6 +109,6 @@ public class RawController extends PIMDefaultController implements ControllerObj
                 out.append("</form>\n");
             }
         }
-        return out.toString();
+        out.append("<script src="+myAnchor.getRootPath()+"\"/static/js/rawEditor.js\"></script>");
     }
 }

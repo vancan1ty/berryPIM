@@ -22,9 +22,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
+import java.io.*;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -44,6 +44,12 @@ public class Utility {
             throws IOException {
         byte[] encoded = Files.readAllBytes(Paths.get(path));
         return new String(encoded, StandardCharsets.UTF_8);
+    }
+
+    public static void spit(String path, String newContents) throws FileNotFoundException {
+        try(PrintWriter out = new PrintWriter(path)) {
+            out.println(newContents);
+        }
     }
 
     public static String convertStreamToString(java.io.InputStream is) {
@@ -133,21 +139,21 @@ public class Utility {
         document = parser.parse(new InputSource(new StringReader(documentStr)));
 
         XPath xPath = XPathFactory.newInstance().newXPath();
-        NodeList result = (NodeList) xPath.compile(xpathStr).evaluate(document,XPathConstants.NODESET);
+        NodeList result = (NodeList) xPath.compile(xpathStr).evaluate(document, XPathConstants.NODESET);
         StringBuilder out = new StringBuilder();
-        for (int i = 0; i< result.getLength(); i++) {
-           out.append(nodeToString(result.item(i)));
+        for (int i = 0; i < result.getLength(); i++) {
+            out.append(nodeToString(result.item(i)));
         }
         return out.toString();
     }
 
     static Transformer transformer = null;
 
-   //http://stackoverflow.com/questions/4412848/xml-node-to-string-in-java
+    //http://stackoverflow.com/questions/4412848/xml-node-to-string-in-java
     private static String nodeToString(Node node) throws TransformerException {
         StringWriter sw = new StringWriter();
         removeEmptyText(node);
-        if(transformer==null) {
+        if (transformer == null) {
             transformer = TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -159,14 +165,14 @@ public class Utility {
     }
 
 
-    public static void removeEmptyText(Node node){
+    public static void removeEmptyText(Node node) {
         Node child = node.getFirstChild();
-        while(child!=null){
+        while (child != null) {
             Node sibling = child.getNextSibling();
-            if(child.getNodeType()==Node.TEXT_NODE){
-                if(child.getTextContent().trim().isEmpty())
+            if (child.getNodeType() == Node.TEXT_NODE) {
+                if (child.getTextContent().trim().isEmpty())
                     node.removeChild(child);
-            }else
+            } else
                 removeEmptyText(child);
             child = sibling;
         }
@@ -190,11 +196,12 @@ public class Utility {
      * [CB 1/6/16] REMEMBER: revisit this if berryPIM is ever the basis for a public facing app -- may need
      * more complex rules to prevent XSS.
      * http://stackoverflow.com/questions/1265282/recommended-method-for-escaping-html-in-java
+     *
      * @param s
      * @return
      */
     public static String escapeXML(String s) {
-        if (s==null) {
+        if (s == null) {
             return null;
         }
         StringBuilder out = new StringBuilder(Math.max(16, s.length()));
@@ -209,6 +216,18 @@ public class Utility {
             }
         }
         return out.toString();
+    }
+
+    //http://stackoverflow.com/questions/13592236/parse-the-uri-string-into-name-value-collection-in-java
+    public static Map<String, String> splitQuery(URL url) throws UnsupportedEncodingException {
+        Map<String, String> query_pairs = new LinkedHashMap<String, String>();
+        String query = url.getQuery();
+        String[] pairs = query.split("&");
+        for (String pair : pairs) {
+            int idx = pair.indexOf("=");
+            query_pairs.put(URLDecoder.decode(pair.substring(0, idx), "UTF-8"), URLDecoder.decode(pair.substring(idx + 1), "UTF-8"));
+        }
+        return query_pairs;
     }
 
 }

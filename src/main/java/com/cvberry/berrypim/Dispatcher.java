@@ -49,7 +49,11 @@ public class Dispatcher {
             response.sendError(404, "couldn't find a page corresponding to that url.");
             return;
         }
-        String myOutput = controller.control(getPathComponents(pathStr), getQueryStr(pathStr), mainTemplate);
+        //CB this is usually passed in the POST body but I guess you could pass
+        //it in the get pamaters as well.
+        String dataBody = request.getParameter("data");
+        Map<String,String[]> params = request.getParameterMap();
+        String myOutput = controller.control(getPathComponents(pathStr), params, mainTemplate,dataBody);
         response.getOutputStream().print(myOutput);
     }
 

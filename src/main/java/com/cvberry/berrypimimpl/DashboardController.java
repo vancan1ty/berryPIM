@@ -1,13 +1,10 @@
 package com.cvberry.berrypimimpl;
 
-import com.cvberry.berrypim.Anchor;
 import com.cvberry.berrypim.ControllerObject;
 import com.cvberry.berrypim.widgets.PieChart;
 import com.cvberry.util.Utility;
 import com.sun.management.OperatingSystemMXBean;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.util.List;
@@ -22,6 +19,7 @@ public class DashboardController extends PIMDefaultController implements Control
         this.controllerBase = controllerBase;
     }
 
+    @Override
     public List<Map.Entry<String, String>> getTopTabsItems() {
         String[] starter = {
                 "home", "Home",
@@ -29,7 +27,8 @@ public class DashboardController extends PIMDefaultController implements Control
         return Utility.tupleizeArray(starter);
     }
 
-    public String fill_contentPane(String[] pathComponents, String queryStr) {
+    @Override
+    public String fill_contentPane(String[] pathComponents, Map<String, String[]> queryParams, String dataBody) {
         StringBuilder out = new StringBuilder();
         out.append("<p>Welcome to berryPIM.  This program is still a work in progress!</p>");
         out.append("<h2>System Statistics</h2>");

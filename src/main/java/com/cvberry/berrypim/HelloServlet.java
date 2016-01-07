@@ -86,8 +86,26 @@ public class HelloServlet extends HttpServlet {
 
     }
 
-    public void doGet(HttpServletRequest request,
-                      HttpServletResponse response)
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Set response content type
+        response.setContentType("text/html");
+
+        System.out.println("pathInfo");
+        String fullReqStr = null;
+        String queryStr = request.getQueryString();
+        if(queryStr != null && !queryStr.isEmpty()) {
+            fullReqStr = request.getPathInfo() + "?" + request.getQueryString();
+        } else {
+            fullReqStr = request.getPathInfo();
+        }
+        System.out.println(fullReqStr);
+        myAnchor.getDispatcher().dispatch(fullReqStr,"{{contentPane}}",request,response);
+
+    }
+
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         // Set response content type
         response.setContentType("text/html");
@@ -114,4 +132,9 @@ public class HelloServlet extends HttpServlet {
     public void destroy() {
         // do nothing.
     }
+
+   public void redirect(HttpServletResponse aResponse, String newURL) throws IOException {
+       aResponse.sendRedirect(newURL);
+   }
+
 }

@@ -31,4 +31,9 @@ public class AppTest {
             IllegalAccessException, InstantiationException, ClassNotFoundException, URISyntaxException {
         Bootstrap.bootstrap("/berryPIM","../berryData");
     }
+
+    @Test
+    public void testGitPull() {
+
+    }
 }

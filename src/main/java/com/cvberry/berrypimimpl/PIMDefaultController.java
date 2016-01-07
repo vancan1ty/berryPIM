@@ -12,6 +12,7 @@ import java.util.Map;
  */
 public class PIMDefaultController extends DefaultController implements ControllerObject {
 
+    @Override
     public List<Map.Entry<String, String>> getLTabItems() {
         String[] starter = {
                 "raw", "Raw",

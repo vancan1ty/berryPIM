@@ -4,18 +4,8 @@ import com.cvberry.berrypim.Anchor;
 import com.cvberry.berrypim.ControllerObject;
 import com.cvberry.berrypim.DataFilesManager;
 import com.cvberry.util.Utility;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +22,7 @@ public class ContactsController2 extends PIMDefaultController implements Control
         filesManager = Anchor.getInstance().getDataFilesManager();
     }
 
+    @Override
     public List<Map.Entry<String, String>> getTopTabsItems() {
         String[] starter = {
                 "home", "Contacts 2 Home",
@@ -39,7 +30,8 @@ public class ContactsController2 extends PIMDefaultController implements Control
         return Utility.tupleizeArray(starter);
     }
 
-    public String fill_contentPane(String[] pathComponents, String queryStr) throws Exception {
+    @Override
+    public String fill_contentPane(String[] pathComponents, Map<String, String[]> queryParams, String dataBody) throws Exception {
         String doctoredTemplate = Anchor.getInstance().getTemplater().getTemplateContents("doctoredTemplate.html");
 
         String rDoctoredTemplate = Anchor.getInstance().getTemplater().template(doctoredTemplate);

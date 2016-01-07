@@ -19,8 +19,8 @@
 
 @media screen and (min-width: 900px) {
     #mainForm {
-        margin-left: 414px;
-        margin-right: -5px;
+        float: right;
+        margin-top: 13px;
     }
 }
 
@@ -211,6 +211,7 @@ ul.legs li {
 /*CB overriden below for normal screens*/
 .fullsize {
         width: 100%;
+        min-height: 150px;
 }
 
 @media screen and (min-width: 900px) {
