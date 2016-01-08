@@ -1,14 +1,17 @@
 package com.cvberry;
 
+import com.cvberry.berrypim.AuthenticationFilter;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
+import javax.servlet.DispatcherType;
 import java.io.File;
 import java.net.JarURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.util.EnumSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,12 +26,13 @@ import java.util.regex.Pattern;
  * the defaults allow you to link xml with xpath expressions with forms, tables, and charts.  with the extensible model,
  * you can develop your own components.
  *
- * CB:TODO figure out how to make it run in standalone mode again.  will require classpath magics I think.
+ * CB:TODO verify that everything works both standalone and within big jetty server.
  */
 public class App {
     public static void main(String[] args) throws Exception {
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
+        context.addFilter(AuthenticationFilter.class,"/*", EnumSet.of(DispatcherType.REQUEST));
 
         String SysJETTYPORT = System.getProperty("JETTYPORT");
         int port = 8080;

@@ -13,6 +13,11 @@
         <servlet-class>org.eclipse.jetty.servlet.DefaultServlet</servlet-class>
     </servlet>
 
+    <filter>
+        <filter-name>AuthenticationFilter</filter-name> <!-- mandatory -->
+        <filter-class>com.cvberry.berrypim.AuthenticationFilter</filter-class> <!-- mandatory -->
+    </filter>
+
     <servlet-mapping>
         <servlet-name>default</servlet-name>
         <url-pattern>/static/*</url-pattern>
@@ -22,5 +27,11 @@
         <servlet-name>helloServlet</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
+
+    <filter-mapping>
+        <filter-name>AuthenticationFilter</filter-name> <!-- mandatory -->
+        <url-pattern>/*</url-pattern> <!-- either url-pattern or servlet-name is mandatory -->
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
 
 </web-app>
