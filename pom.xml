@@ -33,6 +33,11 @@
             <artifactId>jfreechart</artifactId>
             <version>1.0.19</version>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit</artifactId>
+            <version>4.1.1.201511131810-r</version>
+        </dependency>
     </dependencies>
 
     <build>

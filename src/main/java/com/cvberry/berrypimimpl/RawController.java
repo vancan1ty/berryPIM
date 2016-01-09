@@ -69,7 +69,7 @@ public class RawController extends PIMDefaultController implements ControllerObj
         return out.toString();
     }
 
-    public String api_save(String[] pathComponents, Map<String, String[]> queryParams, String dataBody) {
+    public String api_save(String[] pathComponents, Map<String, String[]> queryParams, String dataBody) throws IOException, InterruptedException {
             String fileNameToSave = Utility.getFirstQParamResult(queryParams,"file");
             if (fileNameToSave == null) {
                 throw new RuntimeException("file save failed! -- name of file not specified.");
@@ -84,7 +84,7 @@ public class RawController extends PIMDefaultController implements ControllerObj
                 }
             }
             StringBuilder resultsStrb = new StringBuilder();
-            boolean success =  filesManager.saveNewContentsToFile(fileNameToSave,dataBody,resultsStrb,false);
+            boolean success =  filesManager.saveNewContentsToFile(fileNameToSave,dataBody,resultsStrb,false,false);
             boolean success2= filesManager.readInAllFilesSafe(resultsStrb);
             if(success && success2) {
                 return resultsStrb.toString();

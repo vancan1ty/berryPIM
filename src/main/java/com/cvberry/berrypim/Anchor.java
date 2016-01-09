@@ -43,4 +43,8 @@ public class Anchor {
     private ImageStreamer imStreamer;
     public ImageStreamer getImageStreamer() {return imStreamer;}
     public void setImageStreamer(ImageStreamer imStreamer) {this.imStreamer = imStreamer;}
+
+    private String authRealm;
+    public String getAuthRealm() {return authRealm;}
+    public void setAuthRealm(String authRealm) {this.authRealm = authRealm;}
 }

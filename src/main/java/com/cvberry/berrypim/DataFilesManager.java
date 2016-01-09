@@ -89,7 +89,8 @@ public class DataFilesManager {
      * @param toWriteTo
      * @return whether or not the save was successful
      */
-    public boolean saveNewContentsToFile(String fileName, String dataBody, StringBuilder toWriteTo, boolean overrideModification) {
+    public boolean saveNewContentsToFile(String fileName, String dataBody, StringBuilder toWriteTo,
+                                         boolean overrideModification, boolean doGitCommit) throws IOException, InterruptedException {
         boolean fileModified = false;
         try {
             fileModified = this.getHasFileBeenModified(fileName);
@@ -134,6 +135,10 @@ public class DataFilesManager {
         }
 
         toWriteTo.append(fileName + " has been saved.");
+
+        if(doGitCommit) {//then use GitManager to commit our changes.
+            boolean gitSuccess = GitManager.addCommitFile(Anchor.getInstance().getPIMFilesRoot(),actualFile,toWriteTo);
+        }
         return true;
     }
 

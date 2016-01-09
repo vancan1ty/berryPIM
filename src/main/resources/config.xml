@@ -4,4 +4,5 @@
        com.cvberry.berrypim.DefaultConfigurator
        com.cvberry.berrypimimpl.PIMConfigurator
     </configurators>
+    <authrealm>berryPIM</authrealm>
 </config>

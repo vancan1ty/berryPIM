@@ -19,7 +19,9 @@ public class PIMDefaultController extends DefaultController implements Controlle
                 "dashboard", "Dashboard",
                 "calendar", "Calendar",
                 "contacts", "Contacts",
-                "notes", "Notes"
+                "notes", "Notes",
+                "todos", "Todos",
+                "finance", "Finance"
         };
         return Utility.tupleizeArray(starter);
     }

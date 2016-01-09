@@ -10,4 +10,6 @@ import java.net.URISyntaxException;
  */
 public interface Configurator {
     public void doConfiguration(String rootPath) throws IOException, URISyntaxException;
+
+
 }

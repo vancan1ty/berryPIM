@@ -17,6 +17,9 @@ import java.util.Arrays;
 
 /**
  * Created by vancan1ty on 1/4/2016.
+ *
+ * if 'mconfig.xml' is present on classpath, use that.
+ * otherwise, use config.xml
  */
 public class Bootstrap {
 
@@ -47,7 +50,8 @@ public class Bootstrap {
         DocumentBuilder parser = factory.newDocumentBuilder();
 
         //Parse the file and build a Document tree to represent its content
-        InputStream configStream = Bootstrap.class.getResourceAsStream("/config.xml");
+        InputStream configStream = ConfigXMLFileFinder.getConfigXMLStream();
+
         Document document = parser.parse(configStream);
 
         String xpath = "/config/configurators";
@@ -70,6 +74,9 @@ public class Bootstrap {
             Configurator configurator = (Configurator) configClass.newInstance();
             configurator.doConfiguration(rootPath);
         }
+
+        String authRealm = xPath.compile("/config/authrealm").evaluate(document).trim();
+        myAnchor.setAuthRealm(authRealm);
         //System.out.println(classes.length);
         //System.out.println("all resources.");
         //System.out.println(ResourceLister.listResources(Pattern.compile(".*\\.xml")));
