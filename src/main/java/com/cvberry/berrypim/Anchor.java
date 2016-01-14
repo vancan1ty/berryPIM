@@ -47,4 +47,9 @@ public class Anchor {
     private String authRealm;
     public String getAuthRealm() {return authRealm;}
     public void setAuthRealm(String authRealm) {this.authRealm = authRealm;}
+
+    private AuthenticationManager authManager;
+    public AuthenticationManager getAuthManager() {return authManager;}
+    public void setAuthManager(AuthenticationManager authManager) {this.authManager = authManager;}
+
 }

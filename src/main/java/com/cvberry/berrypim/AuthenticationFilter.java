@@ -39,6 +39,8 @@ public class AuthenticationFilter implements Filter {
             throw new RuntimeException(e);
         }
         myAnchor = Anchor.getInstance();
+        myAnchor.setAuthManager(authManager);
+
     }
 
     @Override
@@ -100,7 +102,7 @@ public class AuthenticationFilter implements Filter {
     }
 
     //http://stackoverflow.com/questions/15611653/implementing-http-basic-authentication-in-a-servlet
-    public Map.Entry<String,String> credentialsWithBasicAuthentication(HttpServletRequest req) {
+    public static Map.Entry<String,String> credentialsWithBasicAuthentication(HttpServletRequest req) {
         String authHeader = req.getHeader("Authorization");
         if (authHeader != null) {
             StringTokenizer st = new StringTokenizer(authHeader);

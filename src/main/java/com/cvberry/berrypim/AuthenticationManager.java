@@ -1,17 +1,10 @@
 package com.cvberry.berrypim;
 
+import com.cvberry.util.AuthInfoHolder;
 import com.cvberry.util.PasswordHasherLite;
-import com.cvberry.util.Utility;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.xpath.XPathExpressionException;
 import java.io.*;
-import java.nio.file.Files;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -26,7 +19,7 @@ import java.util.TreeMap;
 
 public class AuthenticationManager {
 
-    private Map<String,PasswordHasherLite.AuthInfoHolder> authMap;
+    private Map<String,AuthInfoHolder> authMap;
     PasswordHasherLite pwHasher;
     public boolean authenticationFeatureEnabled;
 
@@ -42,7 +35,7 @@ public class AuthenticationManager {
             BufferedReader strReader = new BufferedReader(new StringReader(pwFileStr));
             String line = strReader.readLine();
             while (line != null) {
-                PasswordHasherLite.AuthInfoHolder holder = PasswordHasherLite.retrieveSaltAndHash(line);
+                AuthInfoHolder holder = PasswordHasherLite.retrieveSaltAndHash(line);
                 authMap.put(holder.username,holder);
                 line = strReader.readLine();
             }
@@ -83,10 +76,17 @@ public class AuthenticationManager {
             return false;
         }
 
-        PasswordHasherLite.AuthInfoHolder holder = authMap.get(username);
+        AuthInfoHolder holder = authMap.get(username);
         byte[] givenPasswordBytes = givenPassword.getBytes("UTF-8");
         boolean pwValid = pwHasher.validatePassword(givenPasswordBytes,holder.salt,holder.hash);
+        if(pwValid) {
+            holder.truePassword = givenPassword;
+        }
         return pwValid;
+    }
+
+    public AuthInfoHolder getAuthInfoForUsername(String username) {
+       return this.authMap.get(username);
     }
 
 }

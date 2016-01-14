@@ -5,27 +5,12 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.security.spec.InvalidKeySpecException;
-import java.util.AbstractMap;
 import java.util.Arrays;
-import java.util.Map;
 
 /**
  * [CB 1/7/2016] Like the other class, but doing things much less securely (PBFK2 is just too slow).
  */
 public class PasswordHasherLite {
-
-    public static class AuthInfoHolder {
-        public String username;
-        public byte[] salt;
-        public byte[] hash;
-
-        public AuthInfoHolder(String username, byte[] salt, byte[] hash) {
-            this.username = username;
-            this.salt = salt;
-            this.hash = hash;
-        }
-    }
 
     SecureRandom random;
     MessageDigest digest;
@@ -70,7 +55,7 @@ public class PasswordHasherLite {
         String username = params[0];
         byte[] salt = fromHex(params[1]);
         byte[] hash = fromHex(params[2]);
-        return new AuthInfoHolder(username,salt,hash);
+        return new AuthInfoHolder(username,salt,hash,null);
     }
 
     /**

@@ -3,6 +3,7 @@ package com.cvberry.berrypimimpl;
 import com.cvberry.berrypim.Anchor;
 import com.cvberry.berrypim.ControllerObject;
 import com.cvberry.berrypim.DataFilesManager;
+import com.cvberry.util.AuthInfoHolder;
 import com.cvberry.util.Utility;
 
 import java.io.IOException;
@@ -31,7 +32,8 @@ public class ContactsController2 extends PIMDefaultController implements Control
     }
 
     @Override
-    public String fill_contentPane(String[] pathComponents, Map<String, String[]> queryParams, String dataBody) throws Exception {
+    public String fill_contentPane(String[] pathComponents, Map<String, String[]> queryParams, String dataBody,
+                                   AuthInfoHolder authInfo) throws Exception {
         String doctoredTemplate = Anchor.getInstance().getTemplater().getTemplateContents("doctoredTemplate.html");
 
         String rDoctoredTemplate = Anchor.getInstance().getTemplater().template(doctoredTemplate);

@@ -1,10 +1,9 @@
 package com.cvberry.berrypim;
 
 import com.cvberry.util.Utility;
+import org.eclipse.jgit.api.errors.GitAPIException;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -14,10 +13,12 @@ public class DataFilesManager {
 
     private Map<String, FileInfoObj> fileContentsMap;
     private File rootFile;
+    public GitManager gitManager;
 
     public DataFilesManager(String filesRoot) throws IOException {
         rootFile = new File(filesRoot);
         readInAllFiles();
+        gitManager = new GitManager(filesRoot);
     }
 
     public boolean readInAllFilesSafe(StringBuilder toWriteTo) {
@@ -137,7 +138,12 @@ public class DataFilesManager {
         toWriteTo.append(fileName + " has been saved.");
 
         if(doGitCommit) {//then use GitManager to commit our changes.
-            boolean gitSuccess = GitManager.addCommitFile(Anchor.getInstance().getPIMFilesRoot(),actualFile,toWriteTo);
+            try {
+                gitManager.addCommitFile(fileName);//CB NOTE limitation -- only supports top-level files I think
+            } catch (GitAPIException e) {
+                e.printStackTrace();
+                toWriteTo.append(Utility.collectExceptionToString(e));
+            }
         }
         return true;
     }

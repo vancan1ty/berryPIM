@@ -2,6 +2,7 @@ package com.cvberry.berrypimimpl;
 
 import com.cvberry.berrypim.ControllerObject;
 import com.cvberry.berrypim.widgets.PieChart;
+import com.cvberry.util.AuthInfoHolder;
 import com.cvberry.util.Utility;
 import com.sun.management.OperatingSystemMXBean;
 
@@ -28,7 +29,8 @@ public class DashboardController extends PIMDefaultController implements Control
     }
 
     @Override
-    public String fill_contentPane(String[] pathComponents, Map<String, String[]> queryParams, String dataBody) {
+    public String fill_contentPane(String[] pathComponents, Map<String, String[]> queryParams, String dataBody,
+                                   AuthInfoHolder authInfo) {
         StringBuilder out = new StringBuilder();
         out.append("<p>Welcome to berryPIM.  This program is still a work in progress!</p>");
         out.append("<h2>System Statistics</h2>");

@@ -48,7 +48,7 @@ public class Utility {
 
     public static void spit(String path, String newContents) throws FileNotFoundException {
         try (PrintWriter out = new PrintWriter(path)) {
-            out.println(newContents);
+            out.print(newContents);
         }
     }
 
@@ -244,5 +244,38 @@ public class Utility {
          String s3 = URLDecoder.decode(s2, "utf-8");
          return s3;
    }
+
+        public static int executeShellCommandsWriteOutput(File homeDir, String[] segments, StringBuilder toWriteTo,
+                                                      String toPassToInput)
+            throws IOException, InterruptedException {
+        StringBuilder nNullStrBuilder = toWriteTo;
+        if(toWriteTo == null) {
+            nNullStrBuilder = new StringBuilder();
+        }
+
+        ProcessBuilder pb = new ProcessBuilder(segments);
+            pb.directory(homeDir);
+        Process p = pb.start();
+        if(toPassToInput != null) {
+            OutputStream outS = p.getOutputStream();
+            outS.write(toPassToInput.getBytes("UTF-8"));
+            outS.flush();
+            outS.close();
+        }
+
+        p.waitFor();
+        int out = p.exitValue();
+        String stdOut = Utility.convertStreamToString(p.getInputStream());
+        String stdErr = Utility.convertStreamToString(p.getErrorStream());
+        nNullStrBuilder.append("output\n" + stdOut +"\n");
+        nNullStrBuilder.append("error\n"+ stdErr + "\n");
+        return out;
+    }
+
+    public static String collectExceptionToString(Exception e) {
+        StringWriter errors = new StringWriter();
+        e.printStackTrace(new PrintWriter(errors));
+        return errors.toString();
+    }
 
 }

@@ -1,5 +1,6 @@
 package com.cvberry.berrypim;
 
+import com.cvberry.util.AuthInfoHolder;
 import com.cvberry.util.Utility;
 
 import java.io.PrintWriter;
@@ -23,7 +24,8 @@ public class DefaultController implements ControllerObject {
        rootPathStr = myAnchor.getRootPath()+"/";
     }
 
-    public String control(String[] pathComponents, Map<String, String[]> queryParams, String template, String dataBody) {
+    public String control(String[] pathComponents, Map<String, String[]> queryParams, String template, String dataBody,
+                          AuthInfoHolder authInfo) {
         String out = null;
         String restStr = Utility.getFirstQParamResult(queryParams,"rest");
         if (restStr != null) { //then bypass templating, treat this as an api request.
@@ -35,18 +37,21 @@ public class DefaultController implements ControllerObject {
 
             String methodName = "api_"+actionStr;
             try {
-                Method toCall = this.getClass().getMethod(methodName, String[].class, Map.class, String.class);
-                out = (String) toCall.invoke(this, pathComponents, queryParams, dataBody);
+                Method toCall = this.getClass().getMethod(methodName, String[].class, Map.class, String.class,
+                        AuthInfoHolder.class);
+                out = (String) toCall.invoke(this, pathComponents, queryParams, dataBody,authInfo);
             } catch (Exception e) {
+                e.printStackTrace();
                 throw new RuntimeException(e);
             }
         } else {
-            out = TemplateEngine.templateWController(template, this, pathComponents, queryParams, dataBody);
+            out = TemplateEngine.templateWController(template, this, pathComponents, queryParams, dataBody, authInfo);
         }
         return out;
     }
 
-    public String fill_ltabsItems(String[] pathComponents, Map<String, String[]> queryParams, String dataBody) {
+    public String fill_ltabsItems(String[] pathComponents, Map<String, String[]> queryParams, String dataBody,
+                                  AuthInfoHolder authInfo) {
         String selectorPath = (pathComponents[0] == null || pathComponents[0].isEmpty()) ?
                 getDefaultTab() : pathComponents[0];
         List<Map.Entry<String,String>> items = getLTabItems();
@@ -66,7 +71,8 @@ public class DefaultController implements ControllerObject {
 //                "                    <li><a href=\"searchContacts\">Search Contacts</a></li>";
     }
 
-    public String fill_topTabsItems(String[] pathComponents, Map<String, String[]> queryParams, String dataBody) {
+    public String fill_topTabsItems(String[] pathComponents, Map<String, String[]> queryParams, String dataBody,
+                                    AuthInfoHolder authInfo) {
         List<Map.Entry<String,String>> items = getTopTabsItems();
         String selectorPath = (pathComponents.length < 2 || pathComponents[1] == null || pathComponents[1].isEmpty()) ?
                 items.get(0).getKey() : pathComponents[1];
@@ -88,15 +94,18 @@ public class DefaultController implements ControllerObject {
 
     }
 
-    public String fill_contentPane(String[] pathComponents, Map<String, String[]> queryParams, String dataBody) throws Exception {
+    public String fill_contentPane(String[] pathComponents, Map<String, String[]> queryParams, String dataBody,
+                                   AuthInfoHolder authInfo) throws Exception {
         return "I am content.";
     }
 
-    public String fill_rightSideList(String[] pathComponents, Map<String, String[]> queryParams, String dataBody) throws Exception {
+    public String fill_rightSideList(String[] pathComponents, Map<String, String[]> queryParams, String dataBody,
+                                     AuthInfoHolder authInfo) throws Exception {
         return "";
     }
 
-    public String api_echo(String[] pathComponents, Map<String, String[]> queryParams, String dataBody) throws Exception {
+    public String api_echo(String[] pathComponents, Map<String, String[]> queryParams, String dataBody, AuthInfoHolder authInfo)
+            throws Exception {
         return dataBody;
     }
 

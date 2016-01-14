@@ -36,10 +36,52 @@ function isBlank(str) {
     return (!str || /^\s*$/.test(str));
 }
 
-//http://www.w3schools.com/ajax/tryit.asp?filename=tryajax_post2
+function doSync() {
+    saveEditorFun(function (xhr) {
+        signalSuccess(xhr);
+        window.location.href="?action=sync";
+    },false);
+}
+
 function saveEditor() {
+    saveEditorFun(signalSuccess, true);
+}
+
+function submitDataForSave(data,fileName,doGITCommit,successCallback,failureCallback) {
+        var xhr = new XMLHttpRequest();
+        document.getElementById('loadingStr').innerHTML = "IO.";
+        document.getElementById("loadingStr").style.display="inline"
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                if(xhr.status == 200) {
+                    window.requestsCompleted++;
+                    successCallback(xhr);
+                } else {
+                    failureCallback(xhr);
+                }
+            }
+        };
+
+        xhr.open("POST", "?rest=true&action=save&doGITCommit="+doGITCommit+"&file="+fileName, true);
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhr.send("data="+encodeURIComponent(data));
+}
+
+function standardError(xhr) {
+      document.getElementById('loadingStr').innerHTML = "request failed: " + xhr.status;
+      console.log(xhr);
+}
+
+function makeSuccessFun(numNeeded,successCallback) {
+    var out = function(xhr) {if(window.requestsCompleted==numNeeded){successCallback(xhr);}};
+    return out;
+}
+
+//http://www.w3schools.com/ajax/tryit.asp?filename=tryajax_post2
+function saveEditorFun(successCallback, doGITCommit) {
     var fileName = document.getElementById("fileName").innerHTML;
-    var requestsCompleted = 0;
+    window.requestsCompleted = 0;
     var helperInitialized = document.getElementById("helperInitialized").innerHTML;
     var helperNode = document.getElementById("savedQueries");
     var helperItems = helperNode.getElementsByTagName("li");
@@ -48,54 +90,25 @@ function saveEditor() {
         helperLines = helperLines.concat(helperItems[i].innerHTML,"\n");
     }
     if (helperInitialized == "false" && isBlank(helperLines)) {
-         requestsCompleted++;
+         window.requestsCompleted++;
     } else {
-        var xhttp1 = new XMLHttpRequest();
-        document.getElementById('loadingStr').innerHTML = "IO.";
-        document.getElementById("loadingStr").style.display="inline"
-
-        xhttp1.onreadystatechange = function() {
-            if (xhttp1.readyState == 4) {
-                if(xhttp1.status == 200) {
-                    requestsCompleted++;
-                    doSuccessfulLoad(2,requestsCompleted);
-                } else {
-                    document.getElementById('loadingStr').innerHTML = "request failed: " + xhttp1.status;
-                }
-            }
-        };
-        xhttp1.open("POST", "?rest=true&action=save&file="+fileName+".bPIMD", true);
-        xhttp1.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xhttp1.send("data="+encodeURIComponent(helperLines));
+       submitDataForSave(helperLines,fileName+".bPIMD",doGITCommit,makeSuccessFun(2,successCallback),standardError);
     }
 
     var editorContents = document.getElementById("mainEditor").value;
-    var xhttp2 = new XMLHttpRequest();
-    document.getElementById('loadingStr').innerHTML = "IO.";
-    document.getElementById("loadingStr").style.display="inline"
-
-    xhttp2.onreadystatechange = function() {
-        if (xhttp2.readyState == 4) {
-            if(xhttp2.status == 200) {
-                requestsCompleted++;
-                editorHash = hashEditorContents(); //update saved hash.
-                doSuccessfulLoad(2,requestsCompleted);
-            } else {
-                document.getElementById('loadingStr').innerHTML = "request failed: " + xhttp2.status;
-            }
+    submitDataForSave(editorContents,fileName,doGITCommit,
+        function(xhr) {
+           editorHash = hashEditorContents(); //update saved hash.
+           makeSuccessFun(2,successCallback)(xhr);
         }
-    };
-    xhttp2.open("POST", "?rest=true&action=save&file="+fileName, true);
-    xhttp2.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhttp2.send("data="+encodeURIComponent(editorContents));
+    ,standardError);
 }
 
-function doSuccessfulLoad(numReqsToComplete, numCompleted) {
-   if(numReqsToComplete === numCompleted) {
+function signalSuccess(xhr) {
       document.getElementById('loadingStr').innerHTML = "request successful.";
       setTimeout(function () {
        document.getElementById("loadingStr").style.display="none";
        document.getElementById('loadingStr').innerHTML = "IO.";
       }, 3000);
-   }
 }
+

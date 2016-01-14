@@ -1,5 +1,6 @@
 package com.cvberry.berrypim;
 
+import com.cvberry.util.AuthInfoHolder;
 import com.cvberry.util.Utility;
 
 import javax.servlet.http.HttpServletRequest;
@@ -64,7 +65,9 @@ public class Dispatcher {
             dataBody = Utility.realDecode(request.getParameter("data"));
         }
         Map<String,String[]> params = request.getParameterMap();
-        String myOutput = controller.control(getPathComponents(pathStr), params, mainTemplate,dataBody);
+        Map.Entry<String,String> creds = AuthenticationFilter.credentialsWithBasicAuthentication(request);
+        AuthInfoHolder authInfo = myAnchor.getAuthManager().getAuthInfoForUsername(creds.getKey());
+        String myOutput = controller.control(getPathComponents(pathStr), params, mainTemplate,dataBody,authInfo);
         response.getOutputStream().print(myOutput);
     }
 

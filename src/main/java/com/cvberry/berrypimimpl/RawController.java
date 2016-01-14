@@ -3,7 +3,11 @@ package com.cvberry.berrypimimpl;
 import com.cvberry.berrypim.Anchor;
 import com.cvberry.berrypim.ControllerObject;
 import com.cvberry.berrypim.DataFilesManager;
+import com.cvberry.berrypim.GitManager;
+import com.cvberry.util.AuthInfoHolder;
 import com.cvberry.util.Utility;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -51,8 +55,9 @@ public class RawController extends PIMDefaultController implements ControllerObj
     }
 
     @Override
-    public String fill_contentPane(String[] pathComponents, Map<String, String[]> queryParams, String dataBody)
-            throws SAXException, ParserConfigurationException, XPathExpressionException, IOException, TransformerException {
+    public String fill_contentPane(String[] pathComponents, Map<String, String[]> queryParams, String dataBody,
+                                   AuthInfoHolder authInfo)
+            throws SAXException, ParserConfigurationException, XPathExpressionException, IOException, TransformerException, GitAPIException {
         StringBuilder out = new StringBuilder();
         String fileName;
         if (UNIVERSALFILENAME != null) {
@@ -64,13 +69,20 @@ public class RawController extends PIMDefaultController implements ControllerObj
         if (actionStr!=null && actionStr.equals("reload")) {
             filesManager.readInAllFiles();
         }
+        if (actionStr!=null && actionStr.equals("sync")) {
+            GitManager gitManager = filesManager.gitManager;
+            gitManager.syncToGit(authInfo.truePassword);
+            filesManager.readInAllFiles();
+        }
         String dataStr = Utility.getFirstQParamResult(queryParams,"data");
         displayEditorForFile(out, fileName, actionStr, dataStr);
         return out.toString();
     }
 
-    public String api_save(String[] pathComponents, Map<String, String[]> queryParams, String dataBody) throws IOException, InterruptedException {
+    public String api_save(String[] pathComponents, Map<String, String[]> queryParams, String dataBody,
+                           AuthInfoHolder authInfo) throws IOException, InterruptedException {
             String fileNameToSave = Utility.getFirstQParamResult(queryParams,"file");
+            String doGITCommitStr = Utility.getFirstQParamResult(queryParams,"doGITCommit");
             if (fileNameToSave == null) {
                 throw new RuntimeException("file save failed! -- name of file not specified.");
             }
@@ -84,7 +96,8 @@ public class RawController extends PIMDefaultController implements ControllerObj
                 }
             }
             StringBuilder resultsStrb = new StringBuilder();
-            boolean success =  filesManager.saveNewContentsToFile(fileNameToSave,dataBody,resultsStrb,false,false);
+            boolean doGitCommit = (doGITCommitStr != null && doGITCommitStr.equals("true")) ? true : false;
+            boolean success =  filesManager.saveNewContentsToFile(fileNameToSave,dataBody,resultsStrb,false,doGitCommit);
             boolean success2= filesManager.readInAllFilesSafe(resultsStrb);
             if(success && success2) {
                 return resultsStrb.toString();
@@ -127,7 +140,8 @@ public class RawController extends PIMDefaultController implements ControllerObj
     }
 
     @Override
-    public String fill_rightSideList(String[] pathComponents, Map<String, String[]> queryParams, String dataBody) throws Exception {
+    public String fill_rightSideList(String[] pathComponents, Map<String, String[]> queryParams, String dataBody,
+                                     AuthInfoHolder authInfo) throws Exception {
         String fileName;
         if (UNIVERSALFILENAME != null) {
            fileName = UNIVERSALFILENAME;
