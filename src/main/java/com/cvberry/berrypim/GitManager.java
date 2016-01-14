@@ -10,6 +10,7 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.transport.*;
 
 import java.io.*;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -63,8 +64,11 @@ public class GitManager {
 
         Status status = git.status().call();
         //2. check if there are uncommited changes
-        Set<String> uncommittedChanges = status.getUncommittedChanges();
-        if (!uncommittedChanges.isEmpty()) {
+        Set<String> indexedChanges = new HashSet<>();
+        indexedChanges.addAll(status.getAdded());
+        indexedChanges.addAll(status.getChanged());
+        indexedChanges.addAll(status.getRemoved());
+        if (!indexedChanges.isEmpty()) {
             //3. then commit the changes.
             git.commit()
                     .setMessage("berrypim_data_commit")
@@ -80,8 +84,11 @@ public class GitManager {
 
         //2.  check if there are uncommited files after the previous step.  if there are, run a commit.
         Status status = git.status().call();
-        Set<String> uncommittedChanges = status.getUncommittedChanges();
-        if (!uncommittedChanges.isEmpty()) {
+        Set<String> indexedChanges = new HashSet<>();
+        indexedChanges.addAll(status.getAdded());
+        indexedChanges.addAll(status.getChanged());
+        indexedChanges.addAll(status.getRemoved());
+        if (!indexedChanges.isEmpty()) {
             //3. then commit the changes.
             git.commit()
                     .setMessage("berrypim_data_commit")
