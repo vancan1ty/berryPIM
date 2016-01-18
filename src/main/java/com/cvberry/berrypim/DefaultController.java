@@ -18,28 +18,30 @@ public class DefaultController implements ControllerObject {
     Anchor myAnchor;
     public String rootPathStr;
     public String controllerBase = "";
+    public Templater mTemplater;
 
     public DefaultController() {
-       myAnchor = Anchor.getInstance();
-       rootPathStr = myAnchor.getRootPath()+"/";
+        myAnchor = Anchor.getInstance();
+        rootPathStr = myAnchor.getRootPath() + "/";
+        mTemplater = myAnchor.getTemplater();
     }
 
     public String control(String[] pathComponents, Map<String, String[]> queryParams, String template, String dataBody,
                           AuthInfoHolder authInfo) {
         String out = null;
-        String restStr = Utility.getFirstQParamResult(queryParams,"rest");
+        String restStr = Utility.getFirstQParamResult(queryParams, "rest");
         if (restStr != null) { //then bypass templating, treat this as an api request.
 
-            String actionStr = Utility.getFirstQParamResult(queryParams,"action");
+            String actionStr = Utility.getFirstQParamResult(queryParams, "action");
             if (actionStr == null) {
                 throw new RuntimeException("no action specified.");
             }
 
-            String methodName = "api_"+actionStr;
+            String methodName = "api_" + actionStr;
             try {
                 Method toCall = this.getClass().getMethod(methodName, String[].class, Map.class, String.class,
                         AuthInfoHolder.class);
-                out = (String) toCall.invoke(this, pathComponents, queryParams, dataBody,authInfo);
+                out = (String) toCall.invoke(this, pathComponents, queryParams, dataBody, authInfo);
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new RuntimeException(e);
@@ -54,14 +56,14 @@ public class DefaultController implements ControllerObject {
                                   AuthInfoHolder authInfo) {
         String selectorPath = (pathComponents[0] == null || pathComponents[0].isEmpty()) ?
                 getDefaultTab() : pathComponents[0];
-        List<Map.Entry<String,String>> items = getLTabItems();
+        List<Map.Entry<String, String>> items = getLTabItems();
         StringBuilder out = new StringBuilder();
-        for (Map.Entry<String,String> entry : items) {
+        for (Map.Entry<String, String> entry : items) {
             String key = entry.getKey();
             if (key.toLowerCase().equals(selectorPath.toLowerCase())) {
-                out.append("<li class='active'><a href='"+rootPathStr+entry.getKey()+"'>"+entry.getValue()+"</a></li>\n");
+                out.append("<li class='active'><a href='" + rootPathStr + entry.getKey() + "'>" + entry.getValue() + "</a></li>\n");
             } else {
-                out.append("<li><a href='"+rootPathStr+entry.getKey()+"'>"+entry.getValue()+"</a></li>\n");
+                out.append("<li><a href='" + rootPathStr + entry.getKey() + "'>" + entry.getValue() + "</a></li>\n");
             }
         }
         return out.toString();
@@ -73,16 +75,16 @@ public class DefaultController implements ControllerObject {
 
     public String fill_topTabsItems(String[] pathComponents, Map<String, String[]> queryParams, String dataBody,
                                     AuthInfoHolder authInfo) {
-        List<Map.Entry<String,String>> items = getTopTabsItems();
+        List<Map.Entry<String, String>> items = getTopTabsItems();
         String selectorPath = (pathComponents.length < 2 || pathComponents[1] == null || pathComponents[1].isEmpty()) ?
                 items.get(0).getKey() : pathComponents[1];
         StringBuilder out = new StringBuilder();
-        for (Map.Entry<String,String> entry : items) {
+        for (Map.Entry<String, String> entry : items) {
             String key = entry.getKey();
             if (key.toLowerCase().equals(selectorPath.toLowerCase())) {
-                out.append("<li class='active'><a href='"+rootPathStr+controllerBase+entry.getKey()+"'>"+entry.getValue()+"</a></li>\n");
+                out.append("<li class='active'><a href='" + rootPathStr + controllerBase + entry.getKey() + "'>" + entry.getValue() + "</a></li>\n");
             } else {
-                out.append("<li><a href='"+rootPathStr+controllerBase+entry.getKey()+"'>"+entry.getValue()+"</a></li>\n");
+                out.append("<li><a href='" + rootPathStr + controllerBase + entry.getKey() + "'>" + entry.getValue() + "</a></li>\n");
             }
         }
         return out.toString();

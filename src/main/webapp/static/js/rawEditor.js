@@ -20,17 +20,7 @@ function hashEditorContents() {
     return myCode;
 }
 
-window.onload = function() {
-    editorHash = hashEditorContents();
-};
 
-window.onbeforeunload = function(e) {
-    var nHash = hashEditorContents();
-    var myLink = document.activeElement.href;
-    if(nHash != editorHash) {//then user must have modified the editor
-        return 'You have edited the current document.  Would you like to save it before leaving?'
-    }
-};
 
 function isBlank(str) {
     return (!str || /^\s*$/.test(str));
@@ -112,3 +102,78 @@ function signalSuccess(xhr) {
       }, 3000);
 }
 
+
+
+
+//http://stackoverflow.com/questions/5999118/add-or-update-query-string-parameter
+function updateQueryString(key, value, url) {
+    if (!url) url = window.location.href;
+    var re = new RegExp("([?&])" + key + "=.*?(&|#|$)(.*)", "gi"),
+        hash;
+
+    if (re.test(url)) {
+        if (typeof value !== 'undefined' && value !== null)
+            return url.replace(re, '$1' + key + "=" + value + '$2$3');
+        else {
+            hash = url.split('#');
+            url = hash[0].replace(re, '$1$3').replace(/(&|\?)$/, '');
+            if (typeof hash[1] !== 'undefined' && hash[1] !== null)
+                url += '#' + hash[1];
+            return url;
+        }
+    }
+    else {
+        if (typeof value !== 'undefined' && value !== null) {
+            var separator = url.indexOf('?') !== -1 ? '&' : '?';
+            hash = url.split('#');
+            url = hash[0] + separator + key + '=' + value;
+            if (typeof hash[1] !== 'undefined' && hash[1] !== null)
+                url += '#' + hash[1];
+            return url;
+        }
+        else
+            return url;
+    }
+}
+//http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+function setSelectedFileFromURL() {
+    var file = getParameterByName("file");
+    if (!file) {
+        file=document.getElementById("fileselector").value;
+    }
+    document.getElementById("fileselector").value = file;
+}
+
+function doFileSelection() {
+    var x = document.getElementById("fileselector").value;
+    if(!(x === getParameterByName("file"))) {
+        window.location.href = updateQueryString("file",x);
+    }
+}
+
+function setSelectedGraphTypeFromURL() {
+    var gtype = getParameterByName("gtype");
+    if (!gtype) {
+        gtype="pie";
+    }
+    document.getElementById("graphSelector").value = gtype;
+}
+
+function doGraphControlsSelection() {
+    var x = document.getElementById("graphSelector").value;
+    if(!(x === getParameterByName("gtype"))) {
+        document.location = updateQueryString("gtype",x);
+    }
+    document.getElementById("pie_options").style.display = "none";
+    document.getElementById("bar_options").style.display = "none";
+    document.getElementById("line_options").style.display = "none";
+    document.getElementById("scatter_options").style.display = "none";
+    document.getElementById(x+"_options").style.display = "inline";
+}

@@ -21,7 +21,9 @@ public class PIMDefaultController extends DefaultController implements Controlle
                 "contacts", "Contacts",
                 "notes", "Notes",
                 "todos", "Todos",
-                "finance", "Finance"
+                "finance", "Finance",
+                "email", "Email",
+                "graphs", "Graphs"
         };
         return Utility.tupleizeArray(starter);
     }

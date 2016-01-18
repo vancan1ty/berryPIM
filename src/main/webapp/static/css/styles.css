@@ -215,10 +215,14 @@ ul.legs li {
         min-height: 150px;
 }
 
+#viewport {
+    position: relative;
+    z-index: 100;
+}
+
 textarea#mainEditor {
     resize: both;
     position: relative;
-    z-index: 100;
     min-height: 150px;
     min-width: 20px;
 }
@@ -272,7 +276,7 @@ input.wideinput {
         font-weight: bold;
 }
 
-#rsCSSHelper>ul {
+#rsCSSHelper>ul li {
     background-color: #eeeeee;
 }
 
@@ -284,6 +288,7 @@ input.wideinput {
 #rightside ul li{
     min-height: 20px;
     min-width: 50px;
+    margin-bottom: 5px;
 }
 table.center {
     text-align: center;
@@ -293,5 +298,15 @@ table.center table {
     display:inline-block;
 }
 
+#graphInputItems label {
+  display: block;
+  font-weight: bold;
+  margin-left: 10px;
+}
 
+#graphInputItems input {
+  display: block;
+  margin-left: 10px;
+  width: 300px;
+}
 

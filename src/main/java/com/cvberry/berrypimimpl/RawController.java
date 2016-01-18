@@ -1,9 +1,6 @@
 package com.cvberry.berrypimimpl;
 
-import com.cvberry.berrypim.Anchor;
-import com.cvberry.berrypim.ControllerObject;
-import com.cvberry.berrypim.DataFilesManager;
-import com.cvberry.berrypim.GitManager;
+import com.cvberry.berrypim.*;
 import com.cvberry.util.AuthInfoHolder;
 import com.cvberry.util.Utility;
 import net.sf.saxon.s9api.SaxonApiException;
@@ -26,11 +23,13 @@ public class RawController extends PIMDefaultController implements ControllerObj
     Anchor myAnchor;
     DataFilesManager filesManager;
     public String UNIVERSALFILENAME = null;
+    public Templater templater;
 
     public RawController(String controllerBase) {
         myAnchor = Anchor.getInstance();
         filesManager = myAnchor.getDataFilesManager();
         this.controllerBase = controllerBase;
+        this.templater = myAnchor.getTemplater();
     }
 
     @Override
@@ -135,7 +134,7 @@ public class RawController extends PIMDefaultController implements ControllerObj
                 out.append("</form>\n");
             }
         }
-        out.append("<script src="+myAnchor.getRootPath()+"\"/static/js/rawEditor.js\"></script>");
+        out.append(templater.getTemplateContents("rawEditorLoad.html"));
     }
 
     @Override

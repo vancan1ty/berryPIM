@@ -1,0 +1,13 @@
+<script type="text/javascript">
+window.onload = function() {
+    editorHash = hashEditorContents();
+};
+
+window.onbeforeunload = function(e) {
+    var nHash = hashEditorContents();
+    var myLink = document.activeElement.href;
+    if(nHash != editorHash) {//then user must have modified the editor
+        return 'You have edited the current document.  Would you like to save it before leaving?'
+    }
+};
+</script>

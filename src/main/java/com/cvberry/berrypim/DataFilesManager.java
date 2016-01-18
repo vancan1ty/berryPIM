@@ -190,6 +190,18 @@ public class DataFilesManager {
         return fileList;
     }
 
+    public List<String> listFilesEndingWithStr(String suffix) {
+        List<String> fileList = new ArrayList<>(fileContentsMap.keySet());
+        List<String> outFileList = new ArrayList<>();
+        for (String s : fileList) {
+            if (s.endsWith(suffix)) {
+                outFileList.add(s);
+            }
+        }
+        Collections.sort(outFileList);
+        return outFileList;
+    }
+
     public static class FileInfoObj {
         File actualFile;
         long lastModifiedTime;

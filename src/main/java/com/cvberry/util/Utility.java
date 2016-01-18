@@ -1,8 +1,6 @@
 package com.cvberry.util;
 
-import com.cvberry.berrypim.Anchor;
 import net.sf.saxon.s9api.*;
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -22,11 +20,9 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.io.*;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -132,7 +128,7 @@ public class Utility {
 
         Processor sxProcessor = new Processor(false);
         net.sf.saxon.s9api.DocumentBuilder myBuilder = sxProcessor.newDocumentBuilder();
-        myBuilder.setLineNumbering(true);
+        //myBuilder.setLineNumbering(true);
         //myBuilder.setWhitespaceStrippingPolicy(WhitespaceStrippingPolicy.ALL); this line doesn't work.
         InputStream docStream = new ByteArrayInputStream(documentStr.getBytes("UTF-8"));
         Source source = new StreamSource(docStream);
@@ -165,6 +161,45 @@ public class Utility {
 //        return out.toString();
         String out = outStream.toString("UTF-8");
         return out;
+    }
+
+    public static XdmSequenceIterator runXQueryOnStringToDS(String documentStr, String query) throws IOException, SAXException,
+            ParserConfigurationException, XPathExpressionException, TransformerException, XPathFactoryConfigurationException, SaxonApiException {
+
+        Processor sxProcessor = new Processor(false);
+        net.sf.saxon.s9api.DocumentBuilder myBuilder = sxProcessor.newDocumentBuilder();
+        //myBuilder.setLineNumbering(true);
+        //myBuilder.setWhitespaceStrippingPolicy(WhitespaceStrippingPolicy.ALL); this line doesn't work.
+        InputStream docStream = new ByteArrayInputStream(documentStr.getBytes("UTF-8"));
+        Source source = new StreamSource(docStream);
+        XdmNode parsedDoc = myBuilder.build(source);
+        XQueryCompiler compiler = sxProcessor.newXQueryCompiler();
+        XQueryExecutable compQuery = compiler.compile(query);
+
+
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        Serializer outSerializer = sxProcessor.newSerializer(outStream);
+        outSerializer.setOutputProperty(Serializer.Property.METHOD, "xml");
+        outSerializer.setOutputProperty(Serializer.Property.INDENT, "yes");
+        outSerializer.setOutputProperty(Serializer.Property.OMIT_XML_DECLARATION, "yes");
+
+        XQueryEvaluator evaluator = compQuery.load();
+        evaluator.setContextItem(parsedDoc);
+        evaluator.run(outSerializer);
+
+//        StringBuilder out = new StringBuilder();
+//
+//        for (Object item : evaluator) {
+//            if (XdmNode.class.isAssignableFrom(item.getClass())) {
+//                XdmNode node = (XdmNode) item;
+//                int lineNumber = node.getLineNumber();
+//                out.append(lineNumber + "\n");
+//                out.append(getFullXPath(node) + "\n");
+//                out.append(node.toString() +"\n");
+//            }
+//        }
+//        return out.toString();
+        return evaluator.iterator();
     }
 
     public static String runXPathOnString(String documentStr, String query) throws IOException, SAXException,

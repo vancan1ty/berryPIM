@@ -1,0 +1,36 @@
+<select id="graphSelector" name="graphSelector" onchange="doGraphControlsSelection()">
+   <option value="pie" selected>Pie</option>
+   <option value="bar">Bar</option>
+   <option value="line">Line</option>
+   <option value="scatter">Scatter</option>
+</select>
+
+<div id="graphInputItems">
+   <div id="pie_options">
+      <label>category</label><input name="category"/>
+      <label>y</label><input name="y"/>
+   </div>
+   <div id="bar_options" style="display: none">
+      <label>category</label><input name="category"/>
+      <label>y</label><input name="y"/>
+   </div>
+   <div id="line_options" style="display: none">
+      <label>x</label><input name="x"/>
+      <label>y</label><input name="y"/>
+      <label>category (optional)</label><input name="category"/>
+   </div>
+   <div id="scatter_options" style="display: none">
+      <label>x</label><input name="x"/>
+      <label>y</label><input name="y"/>
+      <label>category (optional)</label><input name="category"/>
+      <label>z (optional)</label><input name="z"/>
+   </div>
+</div>
+<script type="text/javascript">
+   window.onload = function() {
+     setSelectedFileFromURL();
+     doFileSelection();
+     setSelectedGraphTypeFromURL();
+     doGraphControlsSelection();
+   };
+</script>
