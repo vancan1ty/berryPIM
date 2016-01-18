@@ -1,6 +1,8 @@
 package com.cvberry.util;
 
 import com.cvberry.berrypim.Anchor;
+import net.sf.saxon.s9api.*;
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -14,6 +16,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.xpath.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -122,6 +125,46 @@ public class Utility {
         t.join();
         System.out.println("after join");
 
+    }
+
+    public static String runXQueryOnString(String documentStr, String query) throws IOException, SAXException,
+            ParserConfigurationException, XPathExpressionException, TransformerException, XPathFactoryConfigurationException, SaxonApiException {
+
+        Processor sxProcessor = new Processor(false);
+        net.sf.saxon.s9api.DocumentBuilder myBuilder = sxProcessor.newDocumentBuilder();
+        myBuilder.setLineNumbering(true);
+        //myBuilder.setWhitespaceStrippingPolicy(WhitespaceStrippingPolicy.ALL); this line doesn't work.
+        InputStream docStream = new ByteArrayInputStream(documentStr.getBytes("UTF-8"));
+        Source source = new StreamSource(docStream);
+        XdmNode parsedDoc = myBuilder.build(source);
+        XQueryCompiler compiler = sxProcessor.newXQueryCompiler();
+        XQueryExecutable compQuery = compiler.compile(query);
+
+
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        Serializer outSerializer = sxProcessor.newSerializer(outStream);
+        outSerializer.setOutputProperty(Serializer.Property.METHOD, "xml");
+        outSerializer.setOutputProperty(Serializer.Property.INDENT, "yes");
+        outSerializer.setOutputProperty(Serializer.Property.OMIT_XML_DECLARATION, "yes");
+
+        XQueryEvaluator evaluator = compQuery.load();
+        evaluator.setContextItem(parsedDoc);
+        evaluator.run(outSerializer);
+
+//        StringBuilder out = new StringBuilder();
+//
+//        for (Object item : evaluator) {
+//            if (XdmNode.class.isAssignableFrom(item.getClass())) {
+//                XdmNode node = (XdmNode) item;
+//                int lineNumber = node.getLineNumber();
+//                out.append(lineNumber + "\n");
+//                out.append(getFullXPath(node) + "\n");
+//                out.append(node.toString() +"\n");
+//            }
+//        }
+//        return out.toString();
+        String out = outStream.toString("UTF-8");
+        return out;
     }
 
     public static String runXPathOnString(String documentStr, String query) throws IOException, SAXException,
@@ -239,25 +282,25 @@ public class Utility {
         }
     }
 
-     public static String realDecode(String toDecode) throws UnsupportedEncodingException {
-         String s1 = toDecode.replaceAll("%(?![0-9a-fA-F]{2})", "%25");
-         String s2 = s1.replaceAll("\\+", "%2B");
-         String s3 = URLDecoder.decode(s2, "utf-8");
-         return s3;
-   }
+    public static String realDecode(String toDecode) throws UnsupportedEncodingException {
+        String s1 = toDecode.replaceAll("%(?![0-9a-fA-F]{2})", "%25");
+        String s2 = s1.replaceAll("\\+", "%2B");
+        String s3 = URLDecoder.decode(s2, "utf-8");
+        return s3;
+    }
 
-        public static int executeShellCommandsWriteOutput(File homeDir, String[] segments, StringBuilder toWriteTo,
+    public static int executeShellCommandsWriteOutput(File homeDir, String[] segments, StringBuilder toWriteTo,
                                                       String toPassToInput)
             throws IOException, InterruptedException {
         StringBuilder nNullStrBuilder = toWriteTo;
-        if(toWriteTo == null) {
+        if (toWriteTo == null) {
             nNullStrBuilder = new StringBuilder();
         }
 
         ProcessBuilder pb = new ProcessBuilder(segments);
-            pb.directory(homeDir);
+        pb.directory(homeDir);
         Process p = pb.start();
-        if(toPassToInput != null) {
+        if (toPassToInput != null) {
             OutputStream outS = p.getOutputStream();
             outS.write(toPassToInput.getBytes("UTF-8"));
             outS.flush();
@@ -268,8 +311,8 @@ public class Utility {
         int out = p.exitValue();
         String stdOut = Utility.convertStreamToString(p.getInputStream());
         String stdErr = Utility.convertStreamToString(p.getErrorStream());
-        nNullStrBuilder.append("output\n" + stdOut +"\n");
-        nNullStrBuilder.append("error\n"+ stdErr + "\n");
+        nNullStrBuilder.append("output\n" + stdOut + "\n");
+        nNullStrBuilder.append("error\n" + stdErr + "\n");
         return out;
     }
 
@@ -277,6 +320,107 @@ public class Utility {
         StringWriter errors = new StringWriter();
         e.printStackTrace(new PrintWriter(errors));
         return errors.toString();
+    }
+
+    public static String getFullXPath(XdmNode n) {
+// abort early
+        if (null == n)
+            return null;
+
+// declarations
+        XdmNode parent = null;
+        Stack<XdmNode> hierarchy = new Stack<>();
+        StringBuffer buffer = new StringBuffer();
+
+// push element on stack
+        hierarchy.push(n);
+
+        switch (n.getNodeKind()) {
+            case ATTRIBUTE:
+                parent = n.getParent();
+                break;
+            case ELEMENT:
+                parent = n.getParent();
+                break;
+            case DOCUMENT:
+                parent = n.getParent();
+                break;
+            default:
+                throw new IllegalStateException("Unexpected Node type" + n.getNodeKind());
+        }
+
+        while (null != parent && parent.getNodeKind() != XdmNodeKind.DOCUMENT) {
+            // push on stack
+            hierarchy.push(parent);
+
+            // get parent of parent
+            parent = parent.getParent();
+        }
+
+        // construct xpath
+        Object obj = null;
+        while (!hierarchy.isEmpty() && null != (obj = hierarchy.pop())) {
+            XdmNode node = (XdmNode) obj;
+            boolean handled = false;
+
+            if (node.getNodeKind() == XdmNodeKind.ELEMENT) {
+                // is this the root element?
+                if (buffer.length() == 0) {
+                    // root element - simply append element name
+                    buffer.append(node.getNodeName());
+                } else {
+                    // child element - append slash and element name
+                    buffer.append("/");
+                    buffer.append(node.getNodeName());
+
+                    if (true) {
+                        // see if the element has a name or id attribute
+                        if (node.getAttributeValue(new QName("id")) != null) {
+                            // id attribute found - use that
+                            buffer.append("[@id='" + node.getAttributeValue(new QName("id")) + "']");
+                            handled = true;
+                        } else if (node.getAttributeValue(new QName("name")) != null) {
+                            // name attribute found - use that
+                            buffer.append("[@name='" + node.getAttributeValue(new QName("name")) + "']");
+                            handled = true;
+                        }
+                    }
+
+                    if (!handled) {
+                        // no known attribute we could use - get sibling index
+                        int prev_siblings = 1;
+
+                        XdmSequenceIterator prevIterator = node.axisIterator(Axis.PRECEDING_SIBLING);
+                        while (prevIterator.hasNext()) {
+                            XdmItem next = prevIterator.next();
+                            if (XdmNode.class.isAssignableFrom(next.getClass())) {
+                                XdmNode rNext = (XdmNode) next;
+                                if (rNext.getNodeKind().equals(node.getNodeKind())) {
+                                    if (rNext.getNodeName().getLocalName().equalsIgnoreCase(node.getNodeName().getLocalName())) {
+                                        prev_siblings++;
+                                    }
+                                }
+                            }
+                        }
+                        buffer.append("[" + prev_siblings + "]");
+//                        while (null != prev_sibling) {
+//                            if (prev_sibling.getNodeType() == node.getNodeType()) {
+//                                if (prev_sibling.getNodeName().equalsIgnoreCase(
+//                                        node.getNodeName())) {
+//                                    prev_siblings++;
+//                                }
+//                            }
+//                            prev_sibling = prev_sibling.getPreviousSibling();
+//                      }
+                    }
+                }
+            } else if (node.getNodeKind() == XdmNodeKind.ATTRIBUTE) {
+                buffer.append("/@");
+                buffer.append(node.getNodeName());
+            }
+        }
+// return buffer
+        return buffer.toString();
     }
 
 }

@@ -6,6 +6,7 @@ import com.cvberry.berrypim.DataFilesManager;
 import com.cvberry.berrypim.GitManager;
 import com.cvberry.util.AuthInfoHolder;
 import com.cvberry.util.Utility;
+import net.sf.saxon.s9api.SaxonApiException;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.xml.sax.SAXException;
 
@@ -55,7 +56,7 @@ public class RawController extends PIMDefaultController implements ControllerObj
     @Override
     public String fill_contentPane(String[] pathComponents, Map<String, String[]> queryParams, String dataBody,
                                    AuthInfoHolder authInfo)
-            throws SAXException, ParserConfigurationException, XPathExpressionException, IOException, TransformerException, GitAPIException, XPathFactoryConfigurationException {
+            throws SAXException, ParserConfigurationException, XPathExpressionException, IOException, TransformerException, GitAPIException, XPathFactoryConfigurationException, SaxonApiException {
         StringBuilder out = new StringBuilder();
         String fileName;
         if (UNIVERSALFILENAME != null) {
@@ -105,7 +106,7 @@ public class RawController extends PIMDefaultController implements ControllerObj
     }
 
     public void displayEditorForFile(StringBuilder out, String fileName, String action, String dataStr) throws SAXException, TransformerException,
-            ParserConfigurationException, XPathExpressionException, IOException, XPathFactoryConfigurationException {
+            ParserConfigurationException, XPathExpressionException, IOException, XPathFactoryConfigurationException, SaxonApiException {
                 String fileContents = filesManager.getFileContents(fileName);
         out.append("<span id='fileName' style='display:none'>"+fileName+"</span>");
         out.append("<textarea class='fullsize' id='mainEditor'>");
@@ -113,7 +114,7 @@ public class RawController extends PIMDefaultController implements ControllerObj
         out.append("</textarea><br>");
 
         if (fileName.endsWith(".xml") || fileName.endsWith(".xsd")) {
-            out.append("<b>Run XPath</b>\n");
+            out.append("<b>Run XQuery</b>\n");
             if (action != null && action.equals("xpath")) {
                 out.append("<form>\n");
                 out.append("<input type='hidden' name='action' value='xpath'></input>");
@@ -122,7 +123,7 @@ public class RawController extends PIMDefaultController implements ControllerObj
                 out.append("</form>\n");
                 out.append("results:<br>\n");
                 out.append("<pre>\n");
-                String results = Utility.runXPathOnString(fileContents, dataStr);
+                String results = Utility.runXQueryOnString(fileContents, dataStr);
                 String escapedResults = Utility.escapeXML(results);
                 out.append(escapedResults);
                 out.append("</pre>");
