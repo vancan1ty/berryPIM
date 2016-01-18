@@ -16,9 +16,17 @@ import org.jfree.ui.RefineryUtilities;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.text.AttributedString;
+import java.util.List;
 
 public class PieChart {
 
+    public static PieDataset createDataset(List<String> keys, List<Double> values) {
+        DefaultPieDataset dataset = new DefaultPieDataset();
+        for (int i = 0; i < keys.size(); i++) {
+            dataset.setValue(keys.get(i), values.get(i));
+        }
+        return dataset;
+    }
     public static PieDataset createDatasetFromArrays(String[] keys, Double[] values) {
         DefaultPieDataset dataset = new DefaultPieDataset();
         for (int i = 0; i < keys.length; i++) {

@@ -60,7 +60,6 @@ public class GraphsController extends RawController implements ControllerObject 
         GraphsComponent graphComp = new GraphsComponent(fileName, templater,filesManager);
         String graphCompHTML = graphComp.makeContentPaneHTML(pathComponents, queryParams, dataBody, authInfo);
         out.append(graphCompHTML + "\n");
-        out.append("<div id='fileName'>graphs</div>");
 
         String actionStr=Utility.getFirstQParamResult(queryParams,"action");
         if (actionStr!=null && actionStr.equals("reload")) {
