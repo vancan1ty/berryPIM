@@ -1,15 +1,15 @@
 package com.cvberry.berrypim;
 
 import com.cvberry.util.Utility;
+
+import net.sf.saxon.xpath.XPathFactoryImpl;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
+import javax.xml.xpath.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -23,11 +23,11 @@ import java.util.Arrays;
  */
 public class Bootstrap {
 
-    public static void bootstrap(String rootPath) throws IllegalAccessException, ParserConfigurationException, IOException, XPathExpressionException, InstantiationException, URISyntaxException, SAXException, ClassNotFoundException {
+    public static void bootstrap(String rootPath) throws IllegalAccessException, ParserConfigurationException, IOException, XPathExpressionException, InstantiationException, URISyntaxException, SAXException, ClassNotFoundException, XPathFactoryConfigurationException {
         bootstrap(rootPath,null);
     }
     public static void bootstrap(String rootPath,String optionalFilesRoot) throws IOException, SAXException, ParserConfigurationException,
-            XPathExpressionException, ClassNotFoundException, IllegalAccessException, InstantiationException, URISyntaxException {
+            XPathExpressionException, ClassNotFoundException, IllegalAccessException, InstantiationException, URISyntaxException, XPathFactoryConfigurationException {
 
         Anchor myAnchor = Anchor.getInstance();
         myAnchor.setRootPath(rootPath);
@@ -44,6 +44,10 @@ public class Bootstrap {
         ImageStreamer imStreamer = new ImageStreamer();
         myAnchor.setImageStreamer(imStreamer);
 
+        System.setProperty("javax.xml.xpath.XPathFactory", "net.sf.saxon.xpath.XPathFactoryImpl");
+        XPathFactoryImpl xpf = new XPathFactoryImpl();
+        myAnchor.setXPF(xpf);
+
         DocumentBuilderFactory factory = Utility.getConfiguredDocBuilderFactory();
 
         //Now use the factory to create a DOM parser, a.k.a. DocumentBuilder
@@ -55,7 +59,7 @@ public class Bootstrap {
         Document document = parser.parse(configStream);
 
         String xpath = "/config/configurators";
-        XPath xPath = XPathFactory.newInstance().newXPath();
+        XPath xPath = xpf.newXPath();
         /*NodeList nodeList = (NodeList) xPath.compile(xpath).evaluate(xpath, XPathConstants.NODESET);
         String[] results = new String[nodeList.getLength()];
         for (int index = 0; index < nodeList.getLength(); index++) {

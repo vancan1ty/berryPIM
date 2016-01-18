@@ -1,5 +1,6 @@
 package com.cvberry.util;
 
+import com.cvberry.berrypim.Anchor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -13,10 +14,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
+import javax.xml.xpath.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -126,8 +124,8 @@ public class Utility {
 
     }
 
-    public static String runXPathOnString(String documentStr, String query) throws IOException, SAXException,
-            ParserConfigurationException, XPathExpressionException, TransformerException {
+    public static String runXQueryOnString(String documentStr, String query) throws IOException, SAXException,
+            ParserConfigurationException, XPathExpressionException, TransformerException, XPathFactoryConfigurationException {
         DocumentBuilderFactory factory = Utility.getConfiguredDocBuilderFactory();
 
         //Now use the factory to create a DOM parser, a.k.a. DocumentBuilder
@@ -138,12 +136,21 @@ public class Utility {
         Document document = null;
         document = parser.parse(new InputSource(new StringReader(documentStr)));
 
-        XPath xPath = XPathFactory.newInstance().newXPath();
-        NodeList result = (NodeList) xPath.compile(xpathStr).evaluate(document, XPathConstants.NODESET);
+        XPath xPath = Anchor.getInstance().getXPF().newXPath();
+        Object oRes = xPath.compile(xpathStr).evaluate(document, XPathConstants.NODESET);
         StringBuilder out = new StringBuilder();
-        for (int i = 0; i < result.getLength(); i++) {
-            out.append(nodeToString(result.item(i)));
+        if (NodeList.class.isAssignableFrom(oRes.getClass())) {
+            NodeList result = (NodeList) oRes;
+            for (int i = 0; i < result.getLength(); i++) {
+                out.append(nodeToString(result.item(i)));
+            }
+        } else if (String.class.isAssignableFrom(oRes.getClass())) {
+            String result = (String) oRes;
+            out.append(result);
+        } else {
+            throw new RuntimeException("unsupported xpath return type!");
         }
+
         return out.toString();
     }
 

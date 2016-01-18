@@ -41,8 +41,10 @@ public class TemplateEngine {
                 e.printStackTrace();
                 StringWriter sw = new StringWriter();
                 PrintWriter pw = new PrintWriter(sw);
+                pw.print("<pre>");
                 e.printStackTrace(pw);
-                errorBuffer.append(sw.toString()+"\n");
+                pw.print("</pre>");
+                errorBuffer.append(sw.toString()+"<br>\n");
                 iTemplateStr = "could not template " + templateName;
             }
 

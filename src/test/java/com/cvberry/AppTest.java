@@ -18,6 +18,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactoryConfigurationException;
 
 import static org.junit.Assert.*;
 
@@ -42,7 +43,7 @@ public class AppTest {
 
     @Test
     public void testBootstrap() throws SAXException, ParserConfigurationException, XPathExpressionException, IOException,
-            IllegalAccessException, InstantiationException, ClassNotFoundException, URISyntaxException {
+            IllegalAccessException, InstantiationException, ClassNotFoundException, URISyntaxException, XPathFactoryConfigurationException {
         Bootstrap.bootstrap("/berryPIM", "../berryData");
     }
 

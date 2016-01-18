@@ -1,5 +1,7 @@
 package com.cvberry.berrypim;
 
+import net.sf.saxon.xpath.XPathFactoryImpl;
+
 /**
  * Created by vancan1ty on 1/3/2016.
  */
@@ -52,4 +54,7 @@ public class Anchor {
     public AuthenticationManager getAuthManager() {return authManager;}
     public void setAuthManager(AuthenticationManager authManager) {this.authManager = authManager;}
 
+    XPathFactoryImpl xpf;
+    public XPathFactoryImpl getXPF() {return xpf;}
+    public void setXPF(XPathFactoryImpl xpf) {this.xpf= xpf;}
 }

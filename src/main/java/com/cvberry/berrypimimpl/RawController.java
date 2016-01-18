@@ -6,16 +6,14 @@ import com.cvberry.berrypim.DataFilesManager;
 import com.cvberry.berrypim.GitManager;
 import com.cvberry.util.AuthInfoHolder;
 import com.cvberry.util.Utility;
-import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
-import java.io.FileNotFoundException;
+import javax.xml.xpath.XPathFactoryConfigurationException;
 import java.io.IOException;
-import java.net.URLDecoder;
 import java.util.List;
 import java.util.Map;
 
@@ -57,7 +55,7 @@ public class RawController extends PIMDefaultController implements ControllerObj
     @Override
     public String fill_contentPane(String[] pathComponents, Map<String, String[]> queryParams, String dataBody,
                                    AuthInfoHolder authInfo)
-            throws SAXException, ParserConfigurationException, XPathExpressionException, IOException, TransformerException, GitAPIException {
+            throws SAXException, ParserConfigurationException, XPathExpressionException, IOException, TransformerException, GitAPIException, XPathFactoryConfigurationException {
         StringBuilder out = new StringBuilder();
         String fileName;
         if (UNIVERSALFILENAME != null) {
@@ -107,7 +105,7 @@ public class RawController extends PIMDefaultController implements ControllerObj
     }
 
     public void displayEditorForFile(StringBuilder out, String fileName, String action, String dataStr) throws SAXException, TransformerException,
-            ParserConfigurationException, XPathExpressionException, IOException {
+            ParserConfigurationException, XPathExpressionException, IOException, XPathFactoryConfigurationException {
                 String fileContents = filesManager.getFileContents(fileName);
         out.append("<span id='fileName' style='display:none'>"+fileName+"</span>");
         out.append("<textarea class='fullsize' id='mainEditor'>");
@@ -124,7 +122,7 @@ public class RawController extends PIMDefaultController implements ControllerObj
                 out.append("</form>\n");
                 out.append("results:<br>\n");
                 out.append("<pre>\n");
-                String results = Utility.runXPathOnString(fileContents, dataStr);
+                String results = Utility.runXQueryOnString(fileContents, dataStr);
                 String escapedResults = Utility.escapeXML(results);
                 out.append(escapedResults);
                 out.append("</pre>");
