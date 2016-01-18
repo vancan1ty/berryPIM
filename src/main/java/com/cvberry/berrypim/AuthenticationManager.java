@@ -49,7 +49,7 @@ public class AuthenticationManager {
      */
     public String readPWFileToString(String passwordFilePath) throws IOException {
         //String configStr = Utility.convertStreamToString(ConfigXMLFileFinder.getConfigXMLStream());
-        //String filePath = Utility.runXQueryOnString(configStr,"/config/pwfile/text()").trim();
+        //String filePath = Utility.runXPathOnString(configStr,"/config/pwfile/text()").trim();
         if(passwordFilePath == null) {
             return null;//indicates that we should not enforce auth on this session.
         }

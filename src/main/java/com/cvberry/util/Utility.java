@@ -124,7 +124,7 @@ public class Utility {
 
     }
 
-    public static String runXQueryOnString(String documentStr, String query) throws IOException, SAXException,
+    public static String runXPathOnString(String documentStr, String query) throws IOException, SAXException,
             ParserConfigurationException, XPathExpressionException, TransformerException, XPathFactoryConfigurationException {
         DocumentBuilderFactory factory = Utility.getConfiguredDocBuilderFactory();
 
@@ -136,19 +136,13 @@ public class Utility {
         Document document = null;
         document = parser.parse(new InputSource(new StringReader(documentStr)));
 
-        XPath xPath = Anchor.getInstance().getXPF().newXPath();
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        //XPath xPath = Anchor.getInstance().getXPF().newXPath();
         Object oRes = xPath.compile(xpathStr).evaluate(document, XPathConstants.NODESET);
         StringBuilder out = new StringBuilder();
-        if (NodeList.class.isAssignableFrom(oRes.getClass())) {
-            NodeList result = (NodeList) oRes;
-            for (int i = 0; i < result.getLength(); i++) {
-                out.append(nodeToString(result.item(i)));
-            }
-        } else if (String.class.isAssignableFrom(oRes.getClass())) {
-            String result = (String) oRes;
-            out.append(result);
-        } else {
-            throw new RuntimeException("unsupported xpath return type!");
+        NodeList result = (NodeList) oRes;
+        for (int i = 0; i < result.getLength(); i++) {
+            out.append(nodeToString(result.item(i)));
         }
 
         return out.toString();

@@ -122,7 +122,7 @@ public class RawController extends PIMDefaultController implements ControllerObj
                 out.append("</form>\n");
                 out.append("results:<br>\n");
                 out.append("<pre>\n");
-                String results = Utility.runXQueryOnString(fileContents, dataStr);
+                String results = Utility.runXPathOnString(fileContents, dataStr);
                 String escapedResults = Utility.escapeXML(results);
                 out.append(escapedResults);
                 out.append("</pre>");
