@@ -24,7 +24,7 @@
     }
 }
 
-#mainForm input,select {
+#mainForm input, #mainForm select {
     margin: 10px;
 }
 
@@ -173,9 +173,7 @@ li.active {
     text-decoration: none;
 }
 
-#content {
-    padding: 5px;
-}
+
 
 #viewport .entry {
     padding: 5px;
@@ -243,9 +241,16 @@ input.wideinput {
     #viewport {
         width: 800px;
     }
+    #content {
+        padding: 10px;
+    }
+
     .fullsize {
         width: 781px;
         height: 500px;
+        margin-top: -5px;
+        margin-right: -5px;
+        margin-left: -5px;
     }
 
     table.fullspan {
@@ -298,15 +303,14 @@ table.center table {
     display:inline-block;
 }
 
+
 #graphInputItems label {
   display: block;
   font-weight: bold;
-  margin-left: 10px;
 }
 
 #graphInputItems input {
   display: block;
-  margin-left: 10px;
   width: 300px;
 }
 

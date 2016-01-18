@@ -4,6 +4,23 @@
     <meta charset="UTF-8">
     <title>{{appName}}</title>
     <link rel="stylesheet" href="{{rootPath}}/static/css/styles.css">
+
+    <script type="text/javascript">
+function addLoadEvent(func) {
+  var oldonload = window.onload;
+  if (typeof window.onload != 'function') {
+    window.onload = func;
+  } else {
+    window.onload = function() {
+      if (oldonload) {
+        oldonload();
+      }
+      func();
+    }
+  }
+}
+    </script>
+
 </head>
 <body>
 <svg display="none" width="0" height="0" version="1.1" xmlns="http://www.w3.org/2000/svg"

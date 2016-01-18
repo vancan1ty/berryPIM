@@ -6,6 +6,7 @@ import com.cvberry.berrypim.Anchor;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.labels.PieSectionLabelGenerator;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.general.PieDataset;
@@ -14,6 +15,7 @@ import org.jfree.ui.RefineryUtilities;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
+import java.text.AttributedString;
 
 public class PieChart {
 
@@ -32,6 +34,20 @@ public class PieChart {
         PiePlot piePlot = (PiePlot) chart.getPlot();
         piePlot.setShadowXOffset(0);
         piePlot.setShadowYOffset(0);
+        piePlot.setLabelGenerator(new PieSectionLabelGenerator() {
+            @Override
+            public String generateSectionLabel(PieDataset dataset, Comparable key) {
+                return String.format("%.3f",dataset.getValue(key));
+            }
+
+            @Override
+            public AttributedString generateAttributedSectionLabel(PieDataset dataset, Comparable key) {
+                String out = String.format("%.3f",dataset.getValue(key));
+                AttributedString attributedString = new AttributedString(out);
+                return attributedString;
+            }
+        });
+        piePlot.setSimpleLabels(true);
         BufferedImage image = chart.createBufferedImage(width, height);
         String fileName = Anchor.getInstance().getImageStreamer().enqueueImage(image);
         String out = "<img src='"+rootPathStr+fileName+"'/>";

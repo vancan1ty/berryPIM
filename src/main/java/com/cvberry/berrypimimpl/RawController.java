@@ -44,7 +44,7 @@ public class RawController extends PIMDefaultController implements ControllerObj
         return Utility.tupleizeArray(starter);
     }
 
-    public String getFileName(String[] pathComponents) {
+    public String getFileName(String[] pathComponents, Map<String,String[]> queryParams) {
         return Utility.getPathComponentOrDefault(pathComponents, 1, getTopTabsItems().get(0).getKey());
     }
 
@@ -54,14 +54,13 @@ public class RawController extends PIMDefaultController implements ControllerObj
 
     @Override
     public String fill_contentPane(String[] pathComponents, Map<String, String[]> queryParams, String dataBody,
-                                   AuthInfoHolder authInfo)
-            throws SAXException, ParserConfigurationException, XPathExpressionException, IOException, TransformerException, GitAPIException, XPathFactoryConfigurationException, SaxonApiException {
+                                   AuthInfoHolder authInfo) throws IOException, GitAPIException, ParserConfigurationException, TransformerException, XPathExpressionException, SaxonApiException, SAXException, XPathFactoryConfigurationException {
         StringBuilder out = new StringBuilder();
         String fileName;
         if (UNIVERSALFILENAME != null) {
            fileName = UNIVERSALFILENAME;
         } else {
-            fileName = getFileName(pathComponents);
+            fileName = getFileName(pathComponents,queryParams);
         }
         String actionStr=Utility.getFirstQParamResult(queryParams,"action");
         if (actionStr!=null && actionStr.equals("reload")) {
@@ -115,23 +114,17 @@ public class RawController extends PIMDefaultController implements ControllerObj
         if (fileName.endsWith(".xml") || fileName.endsWith(".xsd")) {
             out.append("<b>Run XQuery</b>\n");
             if (action != null && action.equals("xpath")) {
-                out.append("<form>\n");
-                out.append("<input type='hidden' name='action' value='xpath'></input>");
-                out.append("<input class='wideinput' name='data' value='" + dataStr + "'></input>");
-                out.append("<input type='submit'></input>");
-                out.append("</form>\n");
-                out.append("results:<br>\n");
+                out.append("<input id='xpathdata' class='wideinput' name='data' value='" + dataStr + "'></input>");
+                out.append("<button onclick='submitXPATH()'>Submit</button>");
+                out.append("<br>results:<br>\n");
                 out.append("<pre>\n");
                 String results = Utility.runXQueryOnString(fileContents, dataStr);
                 String escapedResults = Utility.escapeXML(results);
                 out.append(escapedResults);
                 out.append("</pre>");
             } else {
-                out.append("<form>\n");
-                out.append("<input type='hidden' name='action' value='xpath'></input>");
-                out.append("<input name='data'></input>");
-                out.append("<input type='submit'></input>");
-                out.append("</form>\n");
+                out.append("<input id='xpathdata' class='wideinput' name='data'></input>");
+                out.append("<button onclick='submitXPATH()'>Submit</button>");
             }
         }
         out.append(templater.getTemplateContents("rawEditorLoad.html"));
@@ -144,7 +137,7 @@ public class RawController extends PIMDefaultController implements ControllerObj
         if (UNIVERSALFILENAME != null) {
            fileName = UNIVERSALFILENAME;
         } else {
-            fileName = getFileName(pathComponents);
+            fileName = getFileName(pathComponents,queryParams);
         }
         String fileContents = filesManager.getFileContents(fileName+".bPIMD");
         StringBuilder out = new StringBuilder();

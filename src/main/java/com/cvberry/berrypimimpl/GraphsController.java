@@ -18,7 +18,7 @@ import java.util.Map;
 /**
  * Created by vancan1ty on 1/4/2016.
  */
-public class GraphsController extends PIMDefaultController implements ControllerObject {
+public class GraphsController extends RawController implements ControllerObject {
 
     Anchor myAnchor;
     DataFilesManager filesManager;
@@ -26,6 +26,7 @@ public class GraphsController extends PIMDefaultController implements Controller
     public Templater templater;
 
     public GraphsController(String controllerBase) {
+        super(controllerBase);
         myAnchor = Anchor.getInstance();
         filesManager = myAnchor.getDataFilesManager();
         this.controllerBase = controllerBase;
@@ -43,13 +44,8 @@ public class GraphsController extends PIMDefaultController implements Controller
 
     @Override
     public String fill_contentPane(String[] pathComponents, Map<String, String[]> queryParams, String dataBody,
-                                   AuthInfoHolder authInfo)
-            throws Exception {
+                                   AuthInfoHolder authInfo) throws SAXException, TransformerException, IOException, XPathExpressionException, SaxonApiException, ParserConfigurationException, XPathFactoryConfigurationException, GitAPIException {
         StringBuilder out = new StringBuilder();
-
-
-        String actionStr = Utility.getFirstQParamResult(queryParams, "action");
-        String dataStr = Utility.getFirstQParamResult(queryParams, "data");
         FileSelectorComponent fileSelector = new FileSelectorComponent(".xml", filesManager);
         String fileSelectHTML = fileSelector.makeContentPaneHTML(pathComponents, queryParams, dataBody, authInfo);
         out.append(fileSelectHTML + "\n");
@@ -64,14 +60,30 @@ public class GraphsController extends PIMDefaultController implements Controller
         GraphsComponent graphComp = new GraphsComponent(fileName, templater,filesManager);
         String graphCompHTML = graphComp.makeContentPaneHTML(pathComponents, queryParams, dataBody, authInfo);
         out.append(graphCompHTML + "\n");
+        out.append("<div id='fileName'>graphs</div>");
 
+        String actionStr=Utility.getFirstQParamResult(queryParams,"action");
+        if (actionStr!=null && actionStr.equals("reload")) {
+            filesManager.readInAllFiles();
+        }
+        if (actionStr!=null && actionStr.equals("sync")) {
+            GitManager gitManager = filesManager.gitManager;
+            gitManager.syncToGit(authInfo.truePassword);
+            filesManager.readInAllFiles();
+        }
+        String dataStr = Utility.getFirstQParamResult(queryParams,"data");
+        displayEditorForFile(out, fileName, actionStr, dataStr);
         return out.toString();
     }
 
     @Override
-    public String fill_rightSideList(String[] pathComponents, Map<String, String[]> queryParams, String dataBody,
-                                     AuthInfoHolder authInfo) throws Exception {
-        RightSideNoteComponent noteList = new RightSideNoteComponent("graphs.bPIMD", filesManager);
-        return noteList.makeContentPaneHTML(pathComponents, queryParams, dataBody, authInfo);
+    public String getFileName(String[] pathComponents, Map<String,String[]> queryParams) {
+        String fileName = null;
+        if (queryParams.containsKey("file")) {
+            fileName = queryParams.get("file")[0];
+        } else {
+            fileName = filesManager.listFilesEndingWithStr(".xml").get(0);
+        }
+        return fileName;
     }
 }

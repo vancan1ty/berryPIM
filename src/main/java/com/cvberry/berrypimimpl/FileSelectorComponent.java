@@ -28,7 +28,7 @@ public class FileSelectorComponent implements PageComponent {
 
     @Override
     public String makeContentPaneHTML(String[] pathComponents, Map<String, String[]> queryParams, String dataBody,
-                                      AuthInfoHolder authInfo) throws Exception {
+                                      AuthInfoHolder authInfo) {
         StringBuilder out = new StringBuilder();
         fileNames = filesManager.listFilesEndingWithStr(fileSuffix);
         out.append("<select id='fileselector' name='fileselector' onchange='doFileSelection()'>\n");

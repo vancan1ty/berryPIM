@@ -25,12 +25,14 @@
       <label>category (optional)</label><input name="category"/>
       <label>z (optional)</label><input name="z"/>
    </div>
+    <button id="submitButton" onclick="doGraphReqSubmission()" style="margin-top: 5px;">Submit</button>
 </div>
 <script type="text/javascript">
-   window.onload = function() {
+addLoadEvent(function() {
      setSelectedFileFromURL();
      doFileSelection();
      setSelectedGraphTypeFromURL();
      doGraphControlsSelection();
-   };
+     setInputValuesFromURL();
+});
 </script>

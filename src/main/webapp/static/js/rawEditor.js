@@ -14,13 +14,21 @@ function hashCode(str) {
   return hash;
 };
 
+
+
+function makeNewDocLocationWithObjSerialized(obj) {
+    var newURL = window.location.href;
+    for (var key in obj) {
+        newURL = updateQueryString(key,encodeURIComponent(obj[key]),newURL);
+    }
+    return newURL;
+}
+
 function hashEditorContents() {
     var editorContents = document.getElementById("mainEditor").value;
     var myCode = hashCode(editorContents);
     return myCode;
 }
-
-
 
 function isBlank(str) {
     return (!str || /^\s*$/.test(str));
@@ -166,6 +174,23 @@ function setSelectedGraphTypeFromURL() {
     document.getElementById("graphSelector").value = gtype;
 }
 
+function setInputValuesFromURL() {
+    var inputVals = {
+       x: getParameterByName("x"),
+       y: getParameterByName("y"),
+       category: getParameterByName("category"),
+       z: getParameterByName("z")
+    };
+    for (var name in inputVals) {
+        var items = document.querySelectorAll("input[name='"+name+"']");
+        for (var i = 0; i < items.length; i++ ) {
+           var item = items[i];
+           item.value = inputVals[name];
+        }
+    }
+}
+
+
 function doGraphControlsSelection() {
     var x = document.getElementById("graphSelector").value;
     if(!(x === getParameterByName("gtype"))) {
@@ -176,4 +201,27 @@ function doGraphControlsSelection() {
     document.getElementById("line_options").style.display = "none";
     document.getElementById("scatter_options").style.display = "none";
     document.getElementById(x+"_options").style.display = "inline";
+}
+
+function doGraphReqSubmission() {
+    var type = document.getElementById("graphSelector").value;
+    var divID = type+"_options";
+    var optDiv = document.getElementById(divID);
+    var inputs = optDiv.querySelectorAll("input");
+    var kvObj = {};
+    for (var i = 0; i < inputs.length; i++) {
+       var input = inputs[i];
+       kvObj[input.name]=input.value;
+    }
+    var newLoc = makeNewDocLocationWithObjSerialized(kvObj);
+    window.location.href = newLoc;
+}
+
+function submitXPATH() {
+    var input = document.getElementById("xpathdata");
+    var kvObj = {};
+    kvObj["data"]=input.value;
+    kvObj["action"]="xpath";
+    var newLoc = makeNewDocLocationWithObjSerialized(kvObj);
+    window.location.href = newLoc;
 }

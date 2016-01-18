@@ -52,7 +52,7 @@ public class DashboardController extends PIMDefaultController implements Control
         out.append(PieChart.createAndEnqueueChart(
                 PieChart.createDatasetFromArrays(new String[]{"Free","Used"},
                         new Double[]{freeMemory/BYTESINGIG,usedMemory/BYTESINGIG}),
-                null,rootPathStr,false,true,300,300));
+                null,rootPathStr,true,true,300,300));
         out.append("<br><table>\n");
         out.append("<tr><th>Total</th><th>Free</th><th>Used</th></tr>\n");
         out.append(String.format("<tr><td>%.1f</td><td>%.1f</td><td>%.1f</td></tr>\n",
@@ -62,7 +62,7 @@ public class DashboardController extends PIMDefaultController implements Control
         out.append(PieChart.createAndEnqueueChart(
                 PieChart.createDatasetFromArrays(new String[]{"Free","Used"},
                         new Double[]{freeDiskSpace/BYTESINGIG,usedDiskSpace/BYTESINGIG}),
-                null,rootPathStr,false,true,300,300));
+                null,rootPathStr,true,true,300,300));
         out.append("<br><table>\n");
         out.append("<tr><th>Total</th><th>Free</th><th>Used</th></tr>\n");
         out.append(String.format("<tr><td>%.1f</td><td>%.1f</td><td>%.1f</td></tr>\n",

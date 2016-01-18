@@ -23,7 +23,7 @@ public class PIMDefaultController extends DefaultController implements Controlle
                 "todos", "Todos",
                 "finance", "Finance",
                 "email", "Email",
-                "graphs", "Graphs"
+                "graphs?gtype=pie&file=finance.xml", "Graphs"
         };
         return Utility.tupleizeArray(starter);
     }
