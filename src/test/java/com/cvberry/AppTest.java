@@ -5,6 +5,7 @@ import com.cvberry.berrypim.Bootstrap;
 import com.cvberry.berrypim.GitManager;
 import com.cvberry.util.AuthInfoHolder;
 import com.cvberry.util.PasswordHasherLite;
+import com.cvberry.util.Utility;
 import com.jcraft.jsch.Session;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PullCommand;
@@ -25,6 +26,8 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
@@ -126,6 +129,17 @@ public class AppTest {
                 System.out.println("ConflictingState: " + entry);
             }
         }
+    }
+
+    @Test
+    public void testURLDecoder() throws UnsupportedEncodingException {
+        String trueDecoded ="//transaction[@amount>30]";
+        //String uEncoded = URLEncoder.encode(trueDecoded,"UTF-8");
+        String coded = "//transaction[@amount&gt;30]";
+        //assertEquals(uEncoded,coded);
+        String decoded = Utility.realDecode(coded);
+        URLDecoder dec;
+        assertEquals("simple decode test",trueDecoded,decoded);
     }
 
 //    @Test
