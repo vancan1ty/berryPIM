@@ -1,7 +1,7 @@
 package com.cvberry.berrypimimpl;
 
+import com.cvberry.berrypim.ChartingUtil;
 import com.cvberry.berrypim.ControllerObject;
-import com.cvberry.berrypim.widgets.PieChart;
 import com.cvberry.util.AuthInfoHolder;
 import com.cvberry.util.Utility;
 import com.sun.management.OperatingSystemMXBean;
@@ -49,8 +49,8 @@ public class DashboardController extends PIMDefaultController implements Control
         out.append("<th><h3>Disk</h3></th>\n");
         out.append("</tr><tr>\n");
         out.append("<td>");
-        out.append(PieChart.createAndEnqueueChart(
-                PieChart.createDatasetFromArrays(new String[]{"Free","Used"},
+        out.append(ChartingUtil.createAndEnqueuePieChart(
+                ChartingUtil.createPieDatasetFromArrays(new String[]{"Free","Used"},
                         new Double[]{freeMemory/BYTESINGIG,usedMemory/BYTESINGIG}),
                 null,rootPathStr,true,true,300,300));
         out.append("<br><table>\n");
@@ -59,8 +59,8 @@ public class DashboardController extends PIMDefaultController implements Control
                 totalMemorySize/BYTESINGIG,freeMemory/BYTESINGIG,usedMemory/BYTESINGIG));
         out.append("</table>\n");
         out.append("</td><td>");
-        out.append(PieChart.createAndEnqueueChart(
-                PieChart.createDatasetFromArrays(new String[]{"Free","Used"},
+        out.append(ChartingUtil.createAndEnqueuePieChart(
+                ChartingUtil.createPieDatasetFromArrays(new String[]{"Free","Used"},
                         new Double[]{freeDiskSpace/BYTESINGIG,usedDiskSpace/BYTESINGIG}),
                 null,rootPathStr,true,true,300,300));
         out.append("<br><table>\n");

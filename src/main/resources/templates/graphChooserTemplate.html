@@ -2,6 +2,7 @@
    <option value="pie" selected>Pie</option>
    <option value="bar">Bar</option>
    <option value="line">Line</option>
+   <option value="linexy">LineXY</option>
    <option value="scatter">Scatter</option>
 </select>
 
@@ -13,17 +14,23 @@
    <div id="bar_options" style="display: none">
       <label>category</label><input name="category"/>
       <label>y</label><input name="y"/>
+      <label>topcat(optional)</label><input name="topcat"/>
    </div>
    <div id="line_options" style="display: none">
+      <label>category</label><input name="category"/>
+      <label>y</label><input name="y"/>
+      <label>topcat(optional)</label><input name="topcat"/>
+   </div>
+   <div id="linexy_options" style="display: none">
       <label>x</label><input name="x"/>
       <label>y</label><input name="y"/>
-      <label>category (optional)</label><input name="category"/>
+      <label>category(optional)</label><input name="category"/>
    </div>
    <div id="scatter_options" style="display: none">
       <label>x</label><input name="x"/>
       <label>y</label><input name="y"/>
-      <label>category (optional)</label><input name="category"/>
       <label>z (optional)</label><input name="z"/>
+      <label>category (optional)</label><input name="category"/>
    </div>
     <button id="submitButton" onclick="doGraphReqSubmission()" style="margin-top: 5px;">Submit</button>
 </div>

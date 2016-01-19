@@ -179,7 +179,8 @@ function setInputValuesFromURL() {
        x: getParameterByName("x"),
        y: getParameterByName("y"),
        category: getParameterByName("category"),
-       z: getParameterByName("z")
+       z: getParameterByName("z"),
+       topcat: getParameterByName("topcat")
     };
     for (var name in inputVals) {
         var items = document.querySelectorAll("input[name='"+name+"']");

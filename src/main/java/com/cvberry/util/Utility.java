@@ -458,4 +458,11 @@ public class Utility {
         return buffer.toString();
     }
 
+    public static boolean nullOrEmpty(String s) {
+        if (s==null || s.trim().equals("")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
