@@ -142,6 +142,7 @@ public class AppTest {
         assertEquals("simple decode test",trueDecoded,decoded);
     }
 
+
 //    @Test
 //    public void testGitPull() throws IOException, GitAPIException {
 //        GitManager manager = new GitManager("../berryData");

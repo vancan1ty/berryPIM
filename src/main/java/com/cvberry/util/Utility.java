@@ -28,6 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * Created by vancan1ty on 1/2/2016.
@@ -200,6 +201,80 @@ public class Utility {
 //        }
 //        return out.toString();
         return evaluator.iterator();
+    }
+
+    public static XdmSequenceIterator runXQueryOnDOMDocument(Document document, String query) throws IOException, SAXException,
+            ParserConfigurationException, XPathExpressionException, TransformerException,
+            XPathFactoryConfigurationException, SaxonApiException {
+
+        Processor sxProcessor = new Processor(false);
+        XdmNode xdmNode = sxProcessor.newDocumentBuilder().wrap(document);
+        return runXQueryOnXdmItem(xdmNode, query);
+    }
+
+    public static XdmSequenceIterator runXQueryOnXdmItem(XdmItem node, String query) throws IOException, SAXException,
+            ParserConfigurationException, XPathExpressionException, TransformerException,
+            XPathFactoryConfigurationException, SaxonApiException {
+
+        Processor sxProcessor = new Processor(false);
+        XQueryCompiler compiler = sxProcessor.newXQueryCompiler();
+        XQueryExecutable compQuery = compiler.compile(query);
+
+        DocumentBuilderFactory dbf = Utility.getConfiguredDocBuilderFactory();
+        Document newDoc = dbf.newDocumentBuilder().newDocument();
+        DOMDestination domDest = new DOMDestination(newDoc);
+        XQueryEvaluator evaluator = compQuery.load();
+        evaluator.setContextItem(node);
+        evaluator.run(domDest);
+        return evaluator.iterator();
+
+    }
+
+    public static String runXQueryOnXdmItemToString(XdmItem node, String query) throws IOException, SAXException,
+            ParserConfigurationException, XPathExpressionException, TransformerException,
+            XPathFactoryConfigurationException, SaxonApiException {
+
+        XdmSequenceIterator iterator = runXQueryOnXdmItem(node, query);
+        if (!iterator.hasNext()) {
+            return null;
+        } else {
+            return iterator.next().getStringValue();
+        }
+    }
+
+//    public static Object runXQueryOnXdmItemToAtomic(XdmItem node, String query, Function convFunc) throws IOException, SAXException,
+//            ParserConfigurationException, XPathExpressionException, TransformerException,
+//            XPathFactoryConfigurationException, SaxonApiException {
+//        XdmSequenceIterator iterator = runXQueryOnXdmItem(node, query);
+//        if (!iterator.hasNext()) {
+//            return null;
+//        } else {
+//            return convFunc.apply(iterator.next().getStringValue());
+//        }
+//    }
+
+    public static Double runXQueryOnXdmItemToDouble(XdmItem node, String query) throws IOException, SAXException,
+            ParserConfigurationException, XPathExpressionException, TransformerException,
+            XPathFactoryConfigurationException, SaxonApiException {
+
+        XdmSequenceIterator iterator = runXQueryOnXdmItem(node,query);
+        if(!iterator.hasNext()) {
+            return null;
+        } else {
+            return Double.parseDouble(iterator.next().getStringValue());
+        }
+    }
+
+    public static Integer runXQueryOnXdmItemToInteger(XdmItem node, String query) throws IOException, SAXException,
+            ParserConfigurationException, XPathExpressionException, TransformerException,
+            XPathFactoryConfigurationException, SaxonApiException {
+
+        XdmSequenceIterator iterator = runXQueryOnXdmItem(node,query);
+        if(!iterator.hasNext()) {
+            return null;
+        } else {
+            return Integer.parseInt(iterator.next().getStringValue());
+        }
     }
 
     public static String runXPathOnString(String documentStr, String query) throws IOException, SAXException,
