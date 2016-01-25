@@ -12,20 +12,20 @@ Goals
 ------------------
 
 berryPIM has specific design goals which are different than the design goals of any other PIM software I have seen.
--1. Be available offline on my computer & online on most web-connected devices.
-   -a) BerryPIM accomplishes this by using git as a revision management tool for data.  git enables plug-and-play
+1. Be available offline on my computer & online on most web-connected devices.
+   1. BerryPIM accomplishes this by using git as a revision management tool for data.  git enables plug-and-play
    content history tracking, and also enables a distributed usage model where I can either use the application deployed
    online directly from my server (any device) or use the application deployed locally without internet (my computer).
--2. Be usable from devices with low specifications.
-   -a) I have a dumbphone.  berryPIM works with my dumbphone, thereby giving me access to all of my documents and
+2. Be usable from devices with low specifications.
+   1. I have a dumbphone.  berryPIM works with my dumbphone, thereby giving me access to all of my documents and
    information on the go, from anywhere.
-   -b) In order to achieve this, at this time I have chosen to make most of the rendering and functionality run on
+   2. In order to achieve this, at this time I have chosen to make most of the rendering and functionality run on
    the server-side, thereby imposing a minimum of requirements on the client.
--3. Store data in a reliable matter, and use a general purpose format which allows me to leverage preexisting tools
+3. Store data in a reliable matter, and use a general purpose format which allows me to leverage preexisting tools
 and practices.
-   -a). I use XML as my data storage format.  For my application, this format works extremely well.  There are a
+   1. I use XML as my data storage format.  For my application, this format works extremely well.  There are a
    number of tools available to parse, validate, and query xml.
-   -b). I use Xpath and XQuery to link the UI together of berryPIM and embed on-the-fly scripting/customization into
+   2. I use Xpath and XQuery to link the UI together of berryPIM and embed on-the-fly scripting/customization into
    berryPIM.  I reuse tools for each of the different application domains.
 
 Building/Running
