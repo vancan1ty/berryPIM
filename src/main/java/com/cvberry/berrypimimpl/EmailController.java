@@ -2,7 +2,6 @@ package com.cvberry.berrypimimpl;
 
 import com.cvberry.berrypim.ControllerObject;
 import com.cvberry.berrypim.TemplateEngine;
-import com.cvberry.berrypim.widgets.PieChart;
 import com.cvberry.util.AuthInfoHolder;
 import com.cvberry.util.Utility;
 import com.sun.management.OperatingSystemMXBean;

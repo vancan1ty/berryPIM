@@ -24,11 +24,11 @@ public class AuthenticationManager {
     public boolean authenticationFeatureEnabled;
 
     public AuthenticationManager(String passwordFilePath) throws IOException, NoSuchAlgorithmException {
-
-        String pwFileStr= readPWFileToString(passwordFilePath);
-        if(pwFileStr==null) {//then the person who started the app is not requesting authentication abilities.
+        if(passwordFilePath == null) {
+            System.out.println("NOTICE: AUTHENTICATION !NOT! ENABLED");
             authenticationFeatureEnabled = false;
         } else {
+            String pwFileStr = readPWFileToString(passwordFilePath);
             authenticationFeatureEnabled = true;
             authMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
             pwHasher = new PasswordHasherLite();
@@ -36,7 +36,7 @@ public class AuthenticationManager {
             String line = strReader.readLine();
             while (line != null) {
                 AuthInfoHolder holder = PasswordHasherLite.retrieveSaltAndHash(line);
-                authMap.put(holder.username,holder);
+                authMap.put(holder.username, holder);
                 line = strReader.readLine();
             }
         }
@@ -50,9 +50,6 @@ public class AuthenticationManager {
     public String readPWFileToString(String passwordFilePath) throws IOException {
         //String configStr = Utility.convertStreamToString(ConfigXMLFileFinder.getConfigXMLStream());
         //String filePath = Utility.runXPathOnString(configStr,"/config/pwfile/text()").trim();
-        if(passwordFilePath == null) {
-            return null;//indicates that we should not enforce auth on this session.
-        }
         File passwordFile = new File(passwordFilePath);
         if(passwordFile == null || !passwordFile.exists()) {
             throw new FileNotFoundException("couldn't locate specified passwords file!");
@@ -87,6 +84,10 @@ public class AuthenticationManager {
 
     public AuthInfoHolder getAuthInfoForUsername(String username) {
        return this.authMap.get(username);
+    }
+
+    public boolean getIsAuthenticationEnabled() {
+        return authenticationFeatureEnabled;
     }
 
 }

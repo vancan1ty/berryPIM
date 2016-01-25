@@ -36,6 +36,10 @@ public class DataFilesManager {
         fileContentsMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
         File[] dataFilesAndFolders = rootFile.listFiles();
+        if(dataFilesAndFolders == null || dataFilesAndFolders.length==0) {
+           System.err.println("COULD NOT LOCATE DATA DIRECTORY!");
+           throw new IOException("data folder not found or empty");
+        }
         for (File f : dataFilesAndFolders) {
             if (f.isFile()) {
                 String contents = Utility.slurp(f.getPath());

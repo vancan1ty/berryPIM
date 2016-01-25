@@ -34,7 +34,7 @@ public class AuthenticationFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         try {
-            authManager = new AuthenticationManager(System.getProperty("BPIM_PWFILE"));
+            authManager = new AuthenticationManager(System.getProperty("BERRYPIM_PWFILE"));
         } catch (IOException | NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
@@ -45,6 +45,9 @@ public class AuthenticationFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        if(!authManager.getIsAuthenticationEnabled()) {
+            chain.doFilter(request, response);//just pass on
+        }
         HttpServletRequest mRequest = (HttpServletRequest) request;
         HttpServletResponse mResponse = (HttpServletResponse) response;
         String userName = null;

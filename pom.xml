@@ -43,6 +43,18 @@
             <artifactId>Saxon-HE</artifactId>
             <version>9.7.0-1</version>
         </dependency>
+        <!-- jgit pull in slf4j api anyway so I just go ahead and make this explicit -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.13</version>
+        </dependency>
+        <!-- slf4j simple just logs to stderr -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.13</version>
+        </dependency>
     </dependencies>
 
     <build>
