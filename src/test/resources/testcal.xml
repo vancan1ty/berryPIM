@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<icalendar>
+<vcalendar>
+  <properties>
+    <prodid>
+      <text>Currell Berry starter calendar -- xcal</text>
+    </prodid>
+    <version>
+      <text>2.0</text>
+    </version>
+  </properties>
+  <components>
+    <vtimezone>
+      <properties>
+        <tzid>US/Eastern</tzid>
+      </properties>
+      <components>
+        <daylight>
+          <properties>
+            <dtstart>
+              <date-time>2016-01-07T00:00:00</date-time>
+            </dtstart>
+            <rrule>
+              <recur>
+                <freq>YEARLY</freq>
+                <byday>1SU</byday>
+                <bymonth>4</bymonth>
+              </recur>
+            </rrule>
+            <tzname>
+              <text>EDT</text>
+            </tzname>
+            <tzoffsetfrom>
+              <utc-offset>-05:00</utc-offset>
+            </tzoffsetfrom>
+            <tzoffsetto>
+              <utc-offset>-04:00</utc-offset>
+            </tzoffsetto>
+          </properties>
+        </daylight>
+        <standard>
+          <properties>
+            <dtstart>
+              <date-time>2000-10-26T02:00:00</date-time>
+            </dtstart>
+            <rrule>
+              <recur>
+                <freq>YEARLY</freq>
+                <byday>-1SU</byday>
+                <bymonth>10</bymonth>
+              </recur>
+            </rrule>
+            <tzname>
+              <text>EST</text>
+            </tzname>
+            <tzoffsetfrom>
+              <utc-offset>-04:00</utc-offset>
+            </tzoffsetfrom>
+            <tzoffsetto>
+              <utc-offset>-05:00</utc-offset>
+            </tzoffsetto>
+          </properties>
+        </standard>
+      </components>
+    </vtimezone>
+    <vevent>
+      <properties>
+        <dtstart>
+          <date-time>2006-01-02T12:00:00</date-time>
+        </dtstart>
+        <duration>
+          <duration>PT1H</duration>
+        </duration>
+        <rrule>
+          <recur>
+            <freq>DAILY</freq>
+            <count>5</count>
+          </recur>
+        </rrule>
+        <rdate>
+          <parameters>
+            <tzid><text>US/Eastern</text></tzid>
+          </parameters>
+          <period>
+            <start>2006-01-02T15:00:00</start>
+            <duration>PT2H</duration>
+          </period>
+        </rdate>
+        <summary>
+          <text>Event #2</text>
+        </summary>
+        <description>
+          <text>We are having a meeting all this week at 12
+          pm for one hour, with an additional meeting on the first day
+          2 hours long.
+Please bring your own lunch for the 12 pm
+          meetings.</text>
+        </description>
+        <uid>
+          <text>00959BC664CA650E933C892C@example.com</text>
+        </uid>
+      </properties>
+    </vevent>
+    <vevent>
+      <properties>
+        <dtstart>
+          <parameters>
+            <tzid><text>US/Eastern</text></tzid>
+          </parameters>
+          <date-time>2006-01-04T14:00:00</date-time>
+        </dtstart>
+        <duration>
+          <duration>PT1H</duration>
+        </duration>
+        <recurrence-id>
+          <parameters>
+            <tzid><text>US/Eastern</text></tzid>
+          </parameters>
+          <date-time>2006-01-04T12:00:00</date-time>
+        </recurrence-id>
+        <summary>
+          <text>Event #2 bis</text>
+        </summary>
+        <uid>
+          <text>00959BC664CA650E933C892C@example.com</text>
+        </uid>
+      </properties>
+    </vevent>
+
+    <vevent id="testrec1">
+      <properties>
+        <dtstart>
+          <date-time>2016-01-07T00:00:00</date-time>
+        </dtstart>
+          <duration>
+              <duration>PT1H</duration>
+          </duration>
+          <rrule>
+              <recur>
+                  <freq>DAILY</freq>
+                  <count>6</count>
+                  <interval>2</interval>
+              </recur>
+          </rrule>
+          <summary>
+              <text>testrec1</text>
+          </summary>
+      </properties>
+    </vevent>
+
+    <vevent id="testrec2">
+        <properties>
+            <dtstart>
+                <date-time>2016-01-07T08:00:00</date-time>
+            </dtstart>
+            <duration>
+                <duration>PT1H</duration>
+            </duration>
+            <rrule>
+                <recur>
+                    <freq>WEEKLY</freq>
+                    <until>2016-02-07T08:00:00</until>
+                    <byday>TU TH</byday>
+                </recur>
+            </rrule>
+            <summary>
+                <text>testrec2</text>
+            </summary>
+        </properties>
+    </vevent>
+
+
+    <vevent>
+    <properties>
+        <dtstart>
+            <date-time>2016-01-15T15:30:00</date-time>
+        </dtstart>
+        <duration>
+            <duration>PT1H</duration>
+        </duration>
+        <summary>
+            <text>programming session.</text>
+        </summary>
+    </properties>
+    </vevent>
+
+    <vevent>
+    <properties>
+        <dtstart>
+            <date-time>2016-01-14T18:00:00</date-time>
+        </dtstart>
+        <duration>
+            <duration>PT1H</duration>
+        </duration>
+        <summary>
+            <text>pancakepalooza preparation.</text>
+        </summary>
+    </properties>
+    </vevent>
+
+    <vevent>
+    <properties>
+        <dtstart>
+            <date-time>2016-01-19T08:00:00</date-time>
+        </dtstart>
+        <duration>
+            <duration>PT2H</duration>
+        </duration>
+        <summary>
+            <text>emissions testing.</text>
+        </summary>
+    </properties>
+    </vevent>
+
+    <vevent>
+    <properties>
+        <dtstart>
+            <date-time>2016-01-20T18:00:00</date-time>
+        </dtstart>
+        <duration>
+            <duration>PT2H</duration>
+        </duration>
+        <summary>
+            <text>dinner with ACME people... more info later.</text>
+        </summary>
+    </properties>
+    </vevent>
+
+    <vevent id="testrec3">
+        <properties>
+            <dtstart>
+                <date-time>2016-01-11T10:00:00</date-time>
+            </dtstart>
+            <duration>
+                <duration>PT1H</duration>
+            </duration>
+            <rrule>
+                <recur>
+                    <freq>WEEKLY</freq>
+                    <until>2016-05-01T00:00:00</until>
+                    <byday>MO WE FR</byday>
+                </recur>
+            </rrule>
+            <summary>
+                <text>PHYS 2213</text>
+            </summary>
+        </properties>
+    </vevent>
+
+
+  </components>
+</vcalendar>
+</icalendar>

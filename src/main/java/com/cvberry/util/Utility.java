@@ -26,9 +26,9 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * Created by vancan1ty on 1/2/2016.
@@ -124,15 +124,11 @@ public class Utility {
 
     }
 
-    public static String runXQueryOnString(String documentStr, String query) throws IOException, SAXException,
-            ParserConfigurationException, XPathExpressionException, TransformerException, XPathFactoryConfigurationException, SaxonApiException {
-
+    public static String runXQueryOnSource(Source source, String query) throws SaxonApiException, UnsupportedEncodingException {
         Processor sxProcessor = new Processor(false);
         net.sf.saxon.s9api.DocumentBuilder myBuilder = sxProcessor.newDocumentBuilder();
         //myBuilder.setLineNumbering(true);
         //myBuilder.setWhitespaceStrippingPolicy(WhitespaceStrippingPolicy.ALL); this line doesn't work.
-        InputStream docStream = new ByteArrayInputStream(documentStr.getBytes("UTF-8"));
-        Source source = new StreamSource(docStream);
         XdmNode parsedDoc = myBuilder.build(source);
         XQueryCompiler compiler = sxProcessor.newXQueryCompiler();
         XQueryExecutable compQuery = compiler.compile(query);
@@ -162,6 +158,21 @@ public class Utility {
 //        return out.toString();
         String out = outStream.toString("UTF-8");
         return out;
+    }
+
+    public static String runXQueryOnDocument(Document document, String query) throws SaxonApiException, UnsupportedEncodingException {
+        DOMSource domSource = new DOMSource(document);
+        return runXQueryOnSource(domSource,query);
+
+    }
+
+    public static String runXQueryOnString(String documentStr, String query) throws IOException, SAXException,
+            ParserConfigurationException, XPathExpressionException, TransformerException, XPathFactoryConfigurationException, SaxonApiException {
+
+        InputStream docStream = new ByteArrayInputStream(documentStr.getBytes("UTF-8"));
+        StreamSource source = new StreamSource(docStream);
+        return runXQueryOnSource(source,query);
+
     }
 
     public static XdmSequenceIterator runXQueryOnStringToDS(String documentStr, String query) throws IOException, SAXException,
@@ -209,14 +220,17 @@ public class Utility {
 
         Processor sxProcessor = new Processor(false);
         XdmNode xdmNode = sxProcessor.newDocumentBuilder().wrap(document);
-        return runXQueryOnXdmItem(xdmNode, query);
+        return runXQueryOnXdmItem(xdmNode, query,sxProcessor);
     }
 
-    public static XdmSequenceIterator runXQueryOnXdmItem(XdmItem node, String query) throws IOException, SAXException,
+
+    public static XdmSequenceIterator runXQueryOnXdmItem(XdmItem node, String query, Processor sxProcessor) throws IOException, SAXException,
             ParserConfigurationException, XPathExpressionException, TransformerException,
             XPathFactoryConfigurationException, SaxonApiException {
 
-        Processor sxProcessor = new Processor(false);
+        if(sxProcessor == null) {
+            sxProcessor = new Processor(false);
+        }
         XQueryCompiler compiler = sxProcessor.newXQueryCompiler();
         XQueryExecutable compQuery = compiler.compile(query);
 
@@ -234,7 +248,7 @@ public class Utility {
             ParserConfigurationException, XPathExpressionException, TransformerException,
             XPathFactoryConfigurationException, SaxonApiException {
 
-        XdmSequenceIterator iterator = runXQueryOnXdmItem(node, query);
+        XdmSequenceIterator iterator = runXQueryOnXdmItem(node, query,null);
         if (!iterator.hasNext()) {
             return null;
         } else {
@@ -257,7 +271,7 @@ public class Utility {
             ParserConfigurationException, XPathExpressionException, TransformerException,
             XPathFactoryConfigurationException, SaxonApiException {
 
-        XdmSequenceIterator iterator = runXQueryOnXdmItem(node,query);
+        XdmSequenceIterator iterator = runXQueryOnXdmItem(node,query,null);
         if(!iterator.hasNext()) {
             return null;
         } else {
@@ -269,7 +283,7 @@ public class Utility {
             ParserConfigurationException, XPathExpressionException, TransformerException,
             XPathFactoryConfigurationException, SaxonApiException {
 
-        XdmSequenceIterator iterator = runXQueryOnXdmItem(node,query);
+        XdmSequenceIterator iterator = runXQueryOnXdmItem(node,query,null);
         if(!iterator.hasNext()) {
             return null;
         } else {
@@ -301,10 +315,28 @@ public class Utility {
         return out.toString();
     }
 
+    public static String runXPathOnDOMNodeToString(Node node, String query) throws IOException, SAXException,
+            ParserConfigurationException, XPathExpressionException, TransformerException, XPathFactoryConfigurationException {
+        DocumentBuilderFactory factory = Utility.getConfiguredDocBuilderFactory();
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        //XPath xPath = Anchor.getInstance().getXPF().newXPath();
+        String oRes = (String) xPath.compile(query).evaluate(node, XPathConstants.STRING);
+        return oRes;
+    }
+
+    public static NodeList runXPathOnDOMNode(Node node, String query) throws IOException, SAXException,
+            ParserConfigurationException, XPathExpressionException, TransformerException, XPathFactoryConfigurationException {
+        DocumentBuilderFactory factory = Utility.getConfiguredDocBuilderFactory();
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        //XPath xPath = Anchor.getInstance().getXPF().newXPath();
+        NodeList oRes = (NodeList) xPath.compile(query).evaluate(node, XPathConstants.NODESET);
+        return oRes;
+    }
+
     static Transformer transformer = null;
 
     //http://stackoverflow.com/questions/4412848/xml-node-to-string-in-java
-    private static String nodeToString(Node node) throws TransformerException {
+    public static String nodeToString(Node node) throws TransformerException {
         StringWriter sw = new StringWriter();
         removeEmptyText(node);
         if (transformer == null) {
@@ -540,4 +572,34 @@ public class Utility {
             return false;
         }
     }
+
+    public static Document parseStreamToDOM(InputStream fileContents) throws ParserConfigurationException, IOException, SAXException {
+        DocumentBuilderFactory factory = Utility.getConfiguredDocBuilderFactory();
+        DocumentBuilder docBuilder = factory.newDocumentBuilder();
+        Document doc = docBuilder.parse(fileContents);
+        return doc;
+    }
+
+    public static SimpleDateFormat isoDateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+
+    public static String strOrNull(String input) {
+        if (input != null && !input.trim().isEmpty()) {
+            return input;
+        } else {
+            return null;
+        }
+    }
+
+    public static int[] splitStringToIntArr(String input, String toSplitOn) {
+        if (input == null || input.trim().isEmpty()) {
+            return null;
+        }
+        String[] split1 = input.split(toSplitOn);
+        int[] out = new int[split1.length];
+        for (int i = 0; i < out.length; i++) {
+            out[i] = Integer.parseInt(split1[i]);
+        }
+        return out;
+    }
+
 }

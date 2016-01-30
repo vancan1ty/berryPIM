@@ -180,7 +180,7 @@ public class DataFilesManager {
         List<String> fileList = new ArrayList<>(fileContentsMap.keySet());
         List<String> outFileList = new ArrayList<>();
         for (String s : fileList) {
-            if (!s.endsWith(".bPIMD")) {
+            if (!s.endsWith(".bPIMD") && !s.equals(".gitignore")) {
                 outFileList.add(s);
             }
         }

@@ -120,6 +120,26 @@ li.active {
         left: -185px;
         bottom: 6px;
     }
+
+    .twothirdswidth {
+        width: 450px;
+        float: left;
+        position: relative;
+        top: -10px;
+    }
+
+    .onethirdwidth {
+        width: 250px;
+        float: left;
+        position: relative;
+        top: -10px;
+    }
+    .halfwidth {
+        width: 350px;
+        float: left;
+        position: relative;
+        top: -10px;
+    }
 }
 
 @media screen and (max-width: 900px) {
@@ -314,4 +334,5 @@ table.center table {
   display: block;
   width: 300px;
 }
+
 

@@ -71,7 +71,8 @@ public class GraphsController extends RawController implements ControllerObject 
             filesManager.readInAllFiles();
         }
         String dataStr = Utility.getFirstQParamResult(queryParams,"data");
-        displayEditorForFile(out, fileName, actionStr, dataStr);
+        String fileContents = filesManager.getFileContents(fileName);
+        displayEditorForFile(out, fileContents, fileName, actionStr, dataStr, false);
         return out.toString();
     }
 

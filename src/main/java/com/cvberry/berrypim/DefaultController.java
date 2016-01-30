@@ -61,7 +61,7 @@ public class DefaultController implements ControllerObject {
         for (Map.Entry<String, String> entry : items) {
             String key = entry.getKey();
             String pathPart = key.split("\\?")[0];
-            if (pathPart.toLowerCase().equals(selectorPath.toLowerCase())) {
+            if (pathPart.toLowerCase().startsWith(selectorPath.toLowerCase())) {
                 out.append("<li class='active'><a href='" + rootPathStr + entry.getKey() + "'>" + entry.getValue() + "</a></li>\n");
             } else {
                 out.append("<li><a href='" + rootPathStr + entry.getKey() + "'>" + entry.getValue() + "</a></li>\n");

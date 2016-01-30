@@ -41,7 +41,7 @@ Build a standalone jar as follows:
 
 For now, the simplest way to run berryPIM looks like the following:
 
-    java -DBERRYPIM_PWFILE=berrypim_passwords.txt -DBERRYPIM_DATA_ROOT=[path/to/data/folder] -jar berrypim-1.0-SNAPSHOT.jar
+    java -DBERRYPIM_PWFILE=berrypim_passwords.txt -DBERRYPIM_DATA_ROOT=[path/to/data/folder] -jar berry-pim-1.0-SNAPSHOT.jar
 
 More info on how to get started with berryPIM is on its way soon.  Right now, it's going to be a pain for anyone
 besides me to get started with.

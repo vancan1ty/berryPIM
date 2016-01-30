@@ -5,6 +5,7 @@ import org.xml.sax.SAXException;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.DatatypeConverter;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPath;
@@ -114,7 +115,8 @@ public class AuthenticationFilter implements Filter {
 
                 if (basic.equalsIgnoreCase("Basic")) {
                     try {
-                        String credentials = new String(Base64.getDecoder().decode(st.nextToken()), "UTF-8");
+                        //String credentials = new String(Base64.getDecoder().decode(st.nextToken()), "UTF-8");//java 8
+                        String credentials = new String(DatatypeConverter.parseBase64Binary(st.nextToken()),"UTF-8");//java 7
                         int p = credentials.indexOf(":");
                         if (p != -1) {
                             String login = credentials.substring(0, p).trim();

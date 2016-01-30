@@ -17,13 +17,14 @@ public class PIMDefaultController extends DefaultController implements Controlle
         String[] starter = {
                 "raw", "Raw",
                 "dashboard", "Dashboard",
-                "calendar", "Calendar",
+                "calendar/home", "Calendar",
                 "contacts", "Contacts",
                 "notes", "Notes",
                 "todos", "Todos",
                 "finance", "Finance",
                 "email", "Email",
-                "graphs?gtype=pie&file=finance.xml", "Graphs"
+                "graphs?gtype=pie&file=finance.xml", "Graphs",
+                "systemInfo", "System Info",
         };
         return Utility.tupleizeArray(starter);
     }

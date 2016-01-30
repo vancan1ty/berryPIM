@@ -1,11 +1,11 @@
 package com.cvberry;
 
+import com.cvberry.berrypim.Anchor;
 import com.cvberry.berrypim.AuthenticationManager;
 import com.cvberry.berrypim.Bootstrap;
 import com.cvberry.berrypim.GitManager;
-import com.cvberry.util.AuthInfoHolder;
-import com.cvberry.util.PasswordHasherLite;
-import com.cvberry.util.Utility;
+import com.cvberry.berrypim.calendar.EffectiveCalendarGenerator;
+import com.cvberry.util.*;
 import com.jcraft.jsch.Session;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PullCommand;
@@ -15,20 +15,29 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.IndexDiff;
 import org.eclipse.jgit.transport.*;
 import org.junit.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactoryConfigurationException;
 
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -175,5 +184,102 @@ public class AppTest {
 //        assertNotSame("can't be empty",output.toString(),"");
 //    }
 
+
+
+//    @Test
+//    public void getResourceListing() throws URISyntaxException, IOException {
+//        String[] tempFileNames = ResourceLister.getResourceListingForPath(Anchor.class,"/templates");
+//        for (String s : tempFileNames) {
+//            System.out.println(s);
+//        }
+//    }
+
+    @Test
+    public void testTestCalExists() {
+        assertNotNull("Test file missing",
+                getClass().getResource("/testcal.xml"));
+    }
+
+    @Test
+    public void testEffectiveCalendar() throws IOException, SAXException, ParserConfigurationException, DatatypeConfigurationException, TransformerException {
+        InputStream is = this.getClass().getResourceAsStream("/testcal.xml");
+        Document testCal = Utility.parseStreamToDOM(is);
+        DomVisitingHelper.ItemVisitorHelper vHelper = new EffectiveCalendarGenerator.ItemRecurrenceHandler(testCal);
+        int doCount = DomVisitingHelper.domVisitTree(testCal, vHelper);
+        assertEquals(6,doCount);
+        vHelper.doFinalAction();
+        System.out.println(Utility.nodeToString(testCal.getFirstChild()));
+
+    }
+
+    @Test
+    public void testDateParse() throws ParseException {
+        SimpleDateFormat df = Utility.isoDateFormatter;
+        Date d1 = df.parse("2016-01-07T00:00:00");
+        Date d2 = df.parse("2012-09-04T12:00:00");
+    }
+
+    @Test
+    public void testGenerateDatesForRecurrencePattern1() throws ParseException {
+        EffectiveCalendarGenerator.RecurrenceParameters recParams1 =
+                new EffectiveCalendarGenerator.RecurrenceParameters(
+                        "DAILY",6,2,null,null,null,null,null,null,null,null,null,null
+                );
+        SimpleDateFormat df = Utility.isoDateFormatter;
+        Date d1 = df.parse("2016-01-07T00:00:00");
+        Collection<Date> dates = EffectiveCalendarGenerator.generateDatesForRecurrencePattern(d1,recParams1);
+        assertEquals(6,dates.size());
+        for (Date d : dates) {
+            System.out.println(df.format(d));
+        }
+    }
+
+    @Test
+    public void testGenerateDatesForRecurrencePattern2() throws Exception {
+        SimpleDateFormat df = Utility.isoDateFormatter;
+        Date d1 = df.parse("2016-01-07T08:00:00");
+        Date d2 = df.parse("2016-02-07T08:00:00");
+        EffectiveCalendarGenerator.RecurrenceParameters recParams1 =
+                new EffectiveCalendarGenerator.RecurrenceParameters(
+                        "WEEKLY",null,null,d2,new String[]{"TU","TH"},null,null,null,null,null,null,null,null
+                );
+        Collection<Date> dates = EffectiveCalendarGenerator.generateDatesForRecurrencePattern(d1,recParams1);
+        assertEquals(10,dates.size());
+        for (Date d : dates) {
+            System.out.println(df.format(d));
+        }
+
+        InputStream is = this.getClass().getResourceAsStream("/testcal.xml");
+        Document testCal = Utility.parseStreamToDOM(is);
+        Node event = Utility.runXPathOnDOMNode(testCal.getFirstChild(),"//vevent[@id='testrec2']").item(0);
+        DatatypeFactory dataTypeFactory = DatatypeFactory.newInstance();
+        EffectiveCalendarGenerator.SimpleEventFields fields =
+                EffectiveCalendarGenerator.getSimpleEventFieldsFromVEvent(dataTypeFactory,event);
+        Node recur = Utility.runXPathOnDOMNode(event,"properties/rrule/recur").item(0);
+        Collection<Date> dates2 =  EffectiveCalendarGenerator.generateDatesForRecurrencePattern(fields.dateTime,recur);
+        assertEquals(dates.size(),dates2.size());
+        List<Date> d1List = new ArrayList<>(dates);
+        List<Date> d2List = new ArrayList<>(dates2);
+        for(int i = 0; i < d1List.size(); i++) {
+            assertEquals(d1List.get(i),d2List.get(i));
+        }
+    }
+
+    @Test
+    public void testGenerateDatesForRecurrencePattern3() throws Exception {
+        SimpleDateFormat df = Utility.isoDateFormatter;
+        InputStream is = this.getClass().getResourceAsStream("/testcal.xml");
+        Document testCal = Utility.parseStreamToDOM(is);
+        Node event = Utility.runXPathOnDOMNode(testCal.getFirstChild(),"//vevent[@id='testrec3']").item(0);
+        DatatypeFactory dataTypeFactory = DatatypeFactory.newInstance();
+        EffectiveCalendarGenerator.SimpleEventFields fields =
+                EffectiveCalendarGenerator.getSimpleEventFieldsFromVEvent(dataTypeFactory,event);
+        Node recur = Utility.runXPathOnDOMNode(event,"properties/rrule/recur").item(0);
+        Collection<Date> dates =  EffectiveCalendarGenerator.generateDatesForRecurrencePattern(fields.dateTime,recur);
+        List<Date> d1List = new ArrayList<>(dates);
+        for(int i = 0; i < d1List.size(); i++) {
+            System.out.println(df.format(d1List.get(i)));
+        }
+    }
 
 }

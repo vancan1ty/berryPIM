@@ -44,7 +44,7 @@ public class RawController extends PIMDefaultController implements ControllerObj
         return Utility.tupleizeArray(starter);
     }
 
-    public String getFileName(String[] pathComponents, Map<String,String[]> queryParams) {
+    public String getFileName(String[] pathComponents, Map<String, String[]> queryParams) {
         return Utility.getPathComponentOrDefault(pathComponents, 1, getTopTabsItems().get(0).getKey());
     }
 
@@ -58,56 +58,78 @@ public class RawController extends PIMDefaultController implements ControllerObj
         StringBuilder out = new StringBuilder();
         String fileName;
         if (UNIVERSALFILENAME != null) {
-           fileName = UNIVERSALFILENAME;
+            fileName = UNIVERSALFILENAME;
         } else {
-            fileName = getFileName(pathComponents,queryParams);
+            fileName = getFileName(pathComponents, queryParams);
         }
-        String actionStr=Utility.getFirstQParamResult(queryParams,"action");
-        if (actionStr!=null && actionStr.equals("reload")) {
+        String actionStr = Utility.getFirstQParamResult(queryParams, "action");
+        if (actionStr != null && actionStr.equals("reload")) {
             filesManager.readInAllFiles();
         }
-        if (actionStr!=null && actionStr.equals("sync")) {
+        if (actionStr != null && actionStr.equals("sync")) {
             GitManager gitManager = filesManager.gitManager;
             gitManager.syncToGit(authInfo.truePassword);
             filesManager.readInAllFiles();
         }
-        String dataStr = Utility.getFirstQParamResult(queryParams,"data");
-        displayEditorForFile(out, fileName, actionStr, dataStr);
+        String dataStr = Utility.getFirstQParamResult(queryParams, "data");
+        String fileContents = filesManager.getFileContents(fileName);
+        displayEditorForFile(out, fileContents, fileName, actionStr, dataStr, false);
         return out.toString();
     }
 
     public String api_save(String[] pathComponents, Map<String, String[]> queryParams, String dataBody,
                            AuthInfoHolder authInfo) throws IOException, InterruptedException {
-            String fileNameToSave = Utility.getFirstQParamResult(queryParams,"file");
-            String doGITCommitStr = Utility.getFirstQParamResult(queryParams,"doGITCommit");
-            if (fileNameToSave == null) {
-                throw new RuntimeException("file save failed! -- name of file not specified.");
-            }
-            if (fileNameToSave.endsWith(".bPIMD")) {//this is one of our special helper files
-                //only save if file already exists or if the string is non-empty
-                String oldContents=filesManager.getFileContents(fileNameToSave);
-                if(dataBody != null && (oldContents!=null || !dataBody.isEmpty())) {//then we should save
-
-                } else {
-                    return "no save necessary for this non-existent helper file.";
-                }
-            }
-            StringBuilder resultsStrb = new StringBuilder();
-            boolean doGitCommit = (doGITCommitStr != null && doGITCommitStr.equals("true")) ? true : false;
-            boolean success =  filesManager.saveNewContentsToFile(fileNameToSave,dataBody,resultsStrb,false,doGitCommit);
-            boolean success2= filesManager.readInAllFilesSafe(resultsStrb);
-            if(success && success2) {
-                return resultsStrb.toString();
-            } else {
-                throw new RuntimeException("file save failed! " + resultsStrb.toString());
-            }
+        String fileNameToSave = Utility.getFirstQParamResult(queryParams, "file");
+        String doGITCommitStr = Utility.getFirstQParamResult(queryParams, "doGITCommit");
+        return saveFile(fileNameToSave, doGITCommitStr, dataBody);
     }
 
-    public void displayEditorForFile(StringBuilder out, String fileName, String action, String dataStr) throws SAXException, TransformerException,
+    public String saveFile(String fileNameToSave, String doGITCommitStr, String dataBody) throws IOException, InterruptedException {
+        if (fileNameToSave == null) {
+            throw new RuntimeException("file save failed! -- name of file not specified.");
+        }
+        if (fileNameToSave.endsWith(".bPIMD")) {//this is one of our special helper files
+            //only save if file already exists or if the string is non-empty
+            String oldContents = filesManager.getFileContents(fileNameToSave);
+            if (dataBody != null && (oldContents != null || !dataBody.isEmpty())) {//then we should save
+
+            } else {
+                return "no save necessary for this non-existent helper file.";
+            }
+        }
+        StringBuilder resultsStrb = new StringBuilder();
+        boolean doGitCommit = (doGITCommitStr != null && doGITCommitStr.equals("true")) ? true : false;
+        boolean success = filesManager.saveNewContentsToFile(fileNameToSave, dataBody, resultsStrb, false, doGitCommit);
+        boolean success2 = filesManager.readInAllFilesSafe(resultsStrb);
+        if (success && success2) {
+            return resultsStrb.toString();
+        } else {
+            throw new RuntimeException("file save failed! " + resultsStrb.toString());
+        }
+    }
+
+    /**
+     * @param out
+     * @param fileContents
+     * @param fileName     is kind of a fake "fileName" -- doesn't have to correspond to real file
+     * @param action
+     * @param dataStr
+     * @param readOnly
+     * @throws SAXException
+     * @throws TransformerException
+     * @throws ParserConfigurationException
+     * @throws XPathExpressionException
+     * @throws IOException
+     * @throws XPathFactoryConfigurationException
+     * @throws SaxonApiException
+     */
+    public void displayEditorForFile(StringBuilder out, String fileContents, String fileName,
+                                     String action, String dataStr, boolean readOnly)
+            throws SAXException, TransformerException,
             ParserConfigurationException, XPathExpressionException, IOException, XPathFactoryConfigurationException, SaxonApiException {
-                String fileContents = filesManager.getFileContents(fileName);
-        out.append("<span id='fileName' style='display:none'>"+fileName+"</span>");
-        out.append("<textarea class='fullsize' id='mainEditor'>");
+        out.append("<span id='fileName' style='display:none'>" + fileName + "</span>");
+        String readOnlyStr = readOnly ? "readonly='readonly'" : "";
+        out.append("<textarea class='fullsize' id='mainEditor'" + readOnlyStr + ">");
         out.append(fileContents);
         out.append("</textarea><br>");
 
@@ -135,27 +157,31 @@ public class RawController extends PIMDefaultController implements ControllerObj
                                      AuthInfoHolder authInfo) throws Exception {
         String fileName;
         if (UNIVERSALFILENAME != null) {
-           fileName = UNIVERSALFILENAME;
+            fileName = UNIVERSALFILENAME;
         } else {
-            fileName = getFileName(pathComponents,queryParams);
+            fileName = getFileName(pathComponents, queryParams);
         }
-        String fileContents = filesManager.getFileContents(fileName+".bPIMD");
+        String fileContents = filesManager.getFileContents(fileName + ".bPIMD");
+        return buildRightSideGivenContents(fileContents);
+    }
+
+    public String buildRightSideGivenContents(String fileContents) {
         StringBuilder out = new StringBuilder();
         out.append("<div id='rsCSSHelper'>");
         out.append("<label>Notes / XPath Queries</label>");
         boolean helperInitialized = false;
         out.append("<ul id='savedQueries' contentEditable='true'>");
-        if(fileContents!=null) {
+        if (fileContents != null) {
             helperInitialized = true;
             String[] lines = fileContents.trim().split("\n");
             for (String s : lines) {
-                out.append("<li>"+Utility.escapeXML(s)+"</li>");
+                out.append("<li>" + Utility.escapeXML(s) + "</li>");
             }
         } else {
             out.append("<li> </li>");
         }
         out.append("</ul>");
-        out.append("<span style='display:none' id='helperInitialized'>"+helperInitialized+"</span>");
+        out.append("<span style='display:none' id='helperInitialized'>" + helperInitialized + "</span>");
         out.append("</div>");
         return out.toString();
     }

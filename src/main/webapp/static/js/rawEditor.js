@@ -93,13 +93,20 @@ function saveEditorFun(successCallback, doGITCommit) {
        submitDataForSave(helperLines,fileName+".bPIMD",doGITCommit,makeSuccessFun(2,successCallback),standardError);
     }
 
-    var editorContents = document.getElementById("mainEditor").value;
-    submitDataForSave(editorContents,fileName,doGITCommit,
+    var editor = document.getElementById("mainEditor");
+    if(editor) {
+        var editorContents = editor.value;
+        submitDataForSave(editorContents,fileName,doGITCommit,
         function(xhr) {
            editorHash = hashEditorContents(); //update saved hash.
            makeSuccessFun(2,successCallback)(xhr);
         }
     ,standardError);
+    } else {//no editor to save
+         window.requestsCompleted++;
+         makeSuccessFun(2,successCallback)(null);
+    }
+
 }
 
 function signalSuccess(xhr) {
